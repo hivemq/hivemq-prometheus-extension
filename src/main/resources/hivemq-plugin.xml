@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<hivemq-plugin>
+    <id>hivemq4-prometheus-monitoring-plugin</id>
+    <name>HiveMQ 4 Prometheus Plugin</name>
+    <version>1.0.0</version>
+    <priority>1000</priority>
+</hivemq-plugin>
