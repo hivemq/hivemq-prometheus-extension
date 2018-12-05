@@ -1,0 +1,10 @@
+/target/
+/.idea/libraries/
+/.idea/cssxfire.xml
+/.idea/workspace.xml
+.DS_Store
+/.idea/
+/hivemq4-prometheus-extension.iml
+
+
+dependency-reduced-pom.xml
