@@ -1,8 +1,39 @@
-== HiveMQ Prometheus Plugin
+== HiveMQ 4 Prometheus monitoring plugin
+=== Type: Monitoring
 
+=== Version: 1.0.0
+
+=== License
+The plugin comes with a Apache License see file://[LICENSE.txt]
+
+=== Purpose
 The Prometheus Monitoring plugin allows HiveMQ to expose metrics to a Prometheus application.
 
-=== First steps
+=== Configuration
+The plugin can be configured with the prometheusConfiguration.properties file, which is part of the `hivemq4-prometheus-monitoring-plugin` folder
+[cols="1m,1,2" options="header"]
+.Configuration Options
+|===
+|Name
+|Default
+|Description
+
+|port
+|9399
+|The port which the servlet will listen to
+
+|host
+|0.0.0.0
+|The bind-address which the servlet will listen to
+
+|metric_path
+|/metrics
+|The path for the service which gets called by Prometheus. It must start with a slash.
+
+|===
+
+
+=== Installation
 
 1. Extract the zip file of the Prometheus monitoring plugin.
    The zip file contains a folder named `hivemq4-prometheus-monitoring-plugin`.
@@ -29,30 +60,6 @@ com_hivemq_messages_incoming_publish_rate_total 0.0
 7. Configure Prometheus to scrape from <ip>:<port>/servlet<metricPath> as configured in the prometheusConfiguration.properties.
 8. Look at the website provided by your Prometheus application. You should be able to find the HiveMQ metrics.
 
-
-=== Configuration of the Prometheus Plugin
-
-The plugin can be configured with the prometheusConfiguration.properties file, which is part of the `hivemq4-prometheus-monitoring-plugin` folder
-[cols="1m,1,2" options="header"]
-.Configuration Options
-|===
-|Name
-|Default
-|Description
-
-|port
-|9399
-|The port which the servlet will listen to
-
-|host
-|0.0.0.0
-|The bind-address which the servlet will listen to
-
-|metric_path
-|/metrics
-|The path for the service which gets called by Prometheus. It must start with a slash.
-
-|===
 
 
 === Configuration of Prometheus
