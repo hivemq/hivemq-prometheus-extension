@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.hivemq.plugin.prometheus.plugin.configuration;
+package com.hivemq.plugin.prometheus.configuration;
 
 import com.hivemq.plugin.api.parameter.PluginInformation;
-import com.hivemq.plugin.prometheus.plugin.exception.InvalidConfigurationException;
+import com.hivemq.plugin.prometheus.exception.InvalidConfigurationException;
 import org.aeonbits.owner.ConfigFactory;
 
 import java.io.File;
@@ -67,17 +67,17 @@ public class ConfigurationReader {
             throw new FileNotFoundException(file.getAbsolutePath());
         }
 
-        try (FileInputStream in = new FileInputStream(file)) {
+        try (final FileInputStream in = new FileInputStream(file)) {
             final Properties properties = new Properties();
             properties.load(in);
 
             testAllPropertiesDeclared(properties);
 
-            PrometheusPluginConfiguration prometheusPluginConfiguration = ConfigFactory.create(PrometheusPluginConfiguration.class, properties);
+            final PrometheusPluginConfiguration prometheusPluginConfiguration = ConfigFactory.create(PrometheusPluginConfiguration.class, properties);
 
             testConfiguration(prometheusPluginConfiguration);
             return prometheusPluginConfiguration;
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new InvalidConfigurationException("Error while reading configuration file.");
         }
     }
@@ -89,15 +89,15 @@ public class ConfigurationReader {
      * @param config config to be tested
      * @throws InvalidConfigurationException thrown when a entry makes no sense or does not meet the requirements
      */
-    private void testConfiguration(PrometheusPluginConfiguration config) throws InvalidConfigurationException {
+    private void testConfiguration(final PrometheusPluginConfiguration config) throws InvalidConfigurationException {
         boolean error = false;
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
 
 
         //test port
         try {
             testPortSense(config);
-        } catch (InvalidConfigurationException e) {
+        } catch (final InvalidConfigurationException e) {
             error = true;
             sb.append(e.getMessage());
         }
@@ -105,7 +105,7 @@ public class ConfigurationReader {
         //test MetricPath
         try {
             testMetricsPathSense(config);
-        } catch (InvalidConfigurationException e) {
+        } catch (final InvalidConfigurationException e) {
             error = true;
             sb.append(e.getMessage());
         }
@@ -113,24 +113,24 @@ public class ConfigurationReader {
         //testIP
         try {
             testIpSense(config);
-        } catch (InvalidConfigurationException e) {
+        } catch (final InvalidConfigurationException e) {
             error = true;
             sb.append(e.getMessage());
         }
 
         if (error) {
-            String msg = "Error while parsing and testing the configuration: " + sb.toString();
+            final String msg = "Error while parsing and testing the configuration: " + sb.toString();
             throw new InvalidConfigurationException(msg);
         }
     }
 
-    private void testPortSense(PrometheusPluginConfiguration config) throws InvalidConfigurationException {
+    private void testPortSense(final PrometheusPluginConfiguration config) throws InvalidConfigurationException {
         try {
             config.port();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new InvalidConfigurationException("Invalid port configuration");
         }
-        int port = config.port();
+        final int port = config.port();
 
         if (port < MIN_PORT) {
             throw new InvalidConfigurationException("The port must not be smaller than " + MIN_PORT + "." + " Value was " + port + ".");
@@ -141,15 +141,15 @@ public class ConfigurationReader {
         }
     }
 
-    private void testIpSense(PrometheusPluginConfiguration config) throws InvalidConfigurationException {
+    private void testIpSense(final PrometheusPluginConfiguration config) throws InvalidConfigurationException {
         try {
             config.hostIp();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new InvalidConfigurationException("Invalid host ip configuration.");
         }
 
 
-        String ip = config.hostIp();
+        final String ip = config.hostIp();
         if (ip.trim().length() == 0) {
             throw new InvalidConfigurationException("The ip must not be blank.");
         }
@@ -157,24 +157,24 @@ public class ConfigurationReader {
 
     }
 
-    private void testMetricsPathSense(PrometheusPluginConfiguration config) throws InvalidConfigurationException {
+    private void testMetricsPathSense(final PrometheusPluginConfiguration config) throws InvalidConfigurationException {
         try {
             config.metricPath();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new InvalidConfigurationException("Invalid metric_path configuration.");
         }
 
 
-        String path = config.metricPath();
+        final String path = config.metricPath();
         if (!path.startsWith("/")) {
             throw new InvalidConfigurationException("The metric_path must begin with a slash, f.e. \"/metrics\".");
         }
     }
 
 
-    private void testAllPropertiesDeclared(Properties properties) throws InvalidConfigurationException {
+    private void testAllPropertiesDeclared(final Properties properties) throws InvalidConfigurationException {
         boolean error = false;
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
 
         if (!properties.containsKey(PrometheusPluginConfiguration.METRIC_PATH_KEY)) {
             sb.append(" " + PrometheusPluginConfiguration.METRIC_PATH_KEY);
@@ -189,7 +189,7 @@ public class ConfigurationReader {
             error = true;
         }
         if (error) {
-            String msg = "Missing required configuration of:" + sb.toString() + ".";
+            final String msg = "Missing required configuration of:" + sb.toString() + ".";
             throw new InvalidConfigurationException(msg);
         }
     }

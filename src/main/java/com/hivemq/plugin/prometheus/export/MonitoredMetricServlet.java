@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hivemq.plugin.prometheus.plugin.export;
+package com.hivemq.plugin.prometheus.export;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;

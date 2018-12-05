@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hivemq.plugin.prometheus.plugin.exception;
+package com.hivemq.plugin.prometheus.exception;
 
 /**
  * An exception which indicates a wrong configuration, e.g. not putting an mandatory field, wrong values, ...
@@ -24,7 +24,7 @@ package com.hivemq.plugin.prometheus.plugin.exception;
 public class InvalidConfigurationException extends Exception {
     private static final long serialVersionUID = -6216153002463951736L;
 
-    public InvalidConfigurationException(String message) {
+    public InvalidConfigurationException(final String message) {
         super(message);
     }
 }

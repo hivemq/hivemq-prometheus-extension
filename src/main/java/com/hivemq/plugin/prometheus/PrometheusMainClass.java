@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hivemq.plugin.prometheus.plugin;
+package com.hivemq.plugin.prometheus;
 
 import com.hivemq.plugin.api.PluginMain;
 import com.hivemq.plugin.api.annotations.NotNull;
@@ -23,10 +23,10 @@ import com.hivemq.plugin.api.parameter.PluginStartOutput;
 import com.hivemq.plugin.api.parameter.PluginStopInput;
 import com.hivemq.plugin.api.parameter.PluginStopOutput;
 import com.hivemq.plugin.api.services.Services;
-import com.hivemq.plugin.prometheus.plugin.configuration.ConfigurationReader;
-import com.hivemq.plugin.prometheus.plugin.configuration.PrometheusPluginConfiguration;
-import com.hivemq.plugin.prometheus.plugin.exception.InvalidConfigurationException;
-import com.hivemq.plugin.prometheus.plugin.export.PrometheusServer;
+import com.hivemq.plugin.prometheus.configuration.ConfigurationReader;
+import com.hivemq.plugin.prometheus.configuration.PrometheusPluginConfiguration;
+import com.hivemq.plugin.prometheus.exception.InvalidConfigurationException;
+import com.hivemq.plugin.prometheus.export.PrometheusServer;
 
 import java.io.FileNotFoundException;
 
@@ -41,18 +41,18 @@ public class PrometheusMainClass implements PluginMain {
     private PrometheusServer prometheusServer;
 
     @Override
-    public void pluginStart(@NotNull PluginStartInput pluginStartInput, @NotNull PluginStartOutput pluginStartOutput) {
+    public void pluginStart(@NotNull final PluginStartInput pluginStartInput, @NotNull final PluginStartOutput pluginStartOutput) {
 
-        PrometheusPluginConfiguration configuration;
+        final PrometheusPluginConfiguration configuration;
         try {
             configuration = new ConfigurationReader(pluginStartInput.getPluginInformation()).readConfiguration();
-        } catch (FileNotFoundException e) {
+        } catch (final FileNotFoundException e) {
             pluginStartOutput.preventPluginStartup("The configuration file: " + e.getMessage() + " could not be read.");
             return;
-        } catch (InvalidConfigurationException e) {
+        } catch (final InvalidConfigurationException e) {
             pluginStartOutput.preventPluginStartup(e.getMessage());
             return;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             pluginStartOutput.preventPluginStartup("Unknown error while reading configuration file" + ((e.getMessage() != null) ? ": " + e.getMessage() : ""));
             return;
         }
@@ -66,7 +66,7 @@ public class PrometheusMainClass implements PluginMain {
     }
 
     @Override
-    public void pluginStop(@NotNull PluginStopInput pluginStopInput, @NotNull PluginStopOutput pluginStopOutput) {
+    public void pluginStop(@NotNull final PluginStopInput pluginStopInput, @NotNull final PluginStopOutput pluginStopOutput) {
         prometheusServer.stop();
     }
 }

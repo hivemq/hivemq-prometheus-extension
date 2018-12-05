@@ -1,9 +1,9 @@
-package com.hivemq.plugin.prometheus.plugin;
+package com.hivemq.plugin.prometheus;
 
 import com.hivemq.plugin.api.parameter.PluginInformation;
 import com.hivemq.plugin.api.parameter.PluginStartInput;
 import com.hivemq.plugin.api.parameter.PluginStartOutput;
-import com.hivemq.plugin.prometheus.plugin.configuration.ConfigurationReader;
+import com.hivemq.plugin.prometheus.configuration.ConfigurationReader;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

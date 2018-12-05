@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hivemq.plugin.prometheus.plugin.configuration;
+package com.hivemq.plugin.prometheus.configuration;
 
 import org.aeonbits.owner.Config;
 

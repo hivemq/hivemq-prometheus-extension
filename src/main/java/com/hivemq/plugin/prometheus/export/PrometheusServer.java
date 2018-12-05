@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.hivemq.plugin.prometheus.plugin.export;
+package com.hivemq.plugin.prometheus.export;
 
 import com.codahale.metrics.MetricRegistry;
 import com.hivemq.plugin.api.annotations.NotNull;
 import com.hivemq.plugin.api.annotations.Nullable;
-import com.hivemq.plugin.prometheus.plugin.configuration.PrometheusPluginConfiguration;
+import com.hivemq.plugin.prometheus.configuration.PrometheusPluginConfiguration;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.dropwizard.DropwizardExports;
 import org.eclipse.jetty.server.Server;
@@ -44,25 +44,25 @@ public class PrometheusServer {
     @NotNull
     private final MetricRegistry metricRegistry;
 
-    @Nullable
-    private Server server;
+    @NotNull
+    private final Server server;
 
     public PrometheusServer(@NotNull final PrometheusPluginConfiguration configuration, @NotNull final MetricRegistry metricRegistry) {
         this.configuration = configuration;
         this.metricRegistry = metricRegistry;
+        server = new Server(new InetSocketAddress(configuration.hostIp(), configuration.port()));
     }
 
 
     public void start() {
         CollectorRegistry.defaultRegistry.register(new DropwizardExports(metricRegistry));
-        server = new Server(new InetSocketAddress(configuration.hostIp(), configuration.port()));
-        ServletContextHandler context = new ServletContextHandler();
+        final ServletContextHandler context = new ServletContextHandler();
         context.setContextPath("/");
         server.setHandler(context);
         context.addServlet(new ServletHolder(new MonitoredMetricServlet(metricRegistry)), configuration.metricPath());
         try {
             server.start();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log.error("Error starting the Jetty Server for Prometheus Plugin");
             log.debug("Original exception was:", e);
         }
@@ -73,7 +73,7 @@ public class PrometheusServer {
         try {
             CollectorRegistry.defaultRegistry.unregister(new DropwizardExports(metricRegistry));
             server.stop();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log.error("Exception occurred while stopping the Prometheus Plugin");
             log.debug("Original exception was: ", e);
         }

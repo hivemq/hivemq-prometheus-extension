@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.hivemq.plugin.prometheus.plugin.configuration;
+package com.hivemq.plugin.prometheus.configuration;
 
 import com.hivemq.plugin.api.parameter.PluginInformation;
-import com.hivemq.plugin.prometheus.plugin.exception.InvalidConfigurationException;
+import com.hivemq.plugin.prometheus.exception.InvalidConfigurationException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
