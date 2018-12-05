@@ -62,7 +62,7 @@ com_hivemq_messages_incoming_publish_rate_total 0.0
 
 
 
-=== Configuration of Prometheus
+=== Final Steps - Configuration of Prometheus
 
 For detailed information please visit:  https://prometheus.io/docs/operating/configuration/
 
