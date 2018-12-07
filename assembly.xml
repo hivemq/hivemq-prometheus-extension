@@ -21,7 +21,7 @@
     </file>
     <file>
         <source>README.adoc</source>
-        <destName>README.txt</destName>
+        <destName>README.adoc</destName>
         <outputDirectory>/${artifactId}/</outputDirectory>
     </file>
     <file>
