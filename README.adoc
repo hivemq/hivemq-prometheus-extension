@@ -1,7 +1,7 @@
 :hivemq-support: http://www.hivemq.com/support/
 
 == HiveMQ Prometheus Extension
-*Type*: Monitoring
+*Extension Type*: Monitoring
 
 *Version*: 4.0.0
 
