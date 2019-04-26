@@ -20,7 +20,7 @@
 
     <groupId>com.hivemq.extension</groupId>
     <artifactId>hivemq-prometheus-extension</artifactId>
-    <version>4.0.0</version>
+    <version>4.0.1</version>
 
     <description>HiveMQ4 extension to utilize Prometheus for monitoring</description>
 
