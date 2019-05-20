@@ -81,4 +81,11 @@ scrape_configs:
 
 If you encounter any problems, we are happy to help. The best place to get in contact is our {hivemq-support}[support^].
 
+= Contributing
+
+If you want to contribute to HiveMQ Prometheus Extension, see the link:CONTRIBUTING.adoc[contribution guidelines].
+
+= License
+
+HiveMQ Prometheus Extension is licensed under the `APACHE LICENSE, VERSION 2.0`. A copy of the license can be found link:LICENSE.txt[here].
 
