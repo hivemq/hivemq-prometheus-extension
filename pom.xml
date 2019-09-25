@@ -123,9 +123,14 @@
                                     <exclude>org.slf4j:*</exclude>
                                     <exclude>ch.qos.logback:*</exclude>
                                     <exclude>javax.ws.rs:*</exclude>
-                                    <exclude>javax.servlet:*</exclude>
                                 </excludes>
                             </artifactSet>
+                            <relocations>
+                                <relocation>
+                                    <pattern>javax.servlet</pattern>
+                                    <shadedPattern>com.hivemq.shaded.javax.servlet</shadedPattern>
+                                </relocation>
+                            </relocations>
                         </configuration>
                     </execution>
                 </executions>
