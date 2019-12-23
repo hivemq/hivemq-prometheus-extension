@@ -3,7 +3,7 @@
 == HiveMQ Prometheus Extension
 *Extension Type*: Monitoring
 
-*Version*: 4.0.1
+*Version*: 4.0.2
 
 *License*: Apache License 2.0
 
