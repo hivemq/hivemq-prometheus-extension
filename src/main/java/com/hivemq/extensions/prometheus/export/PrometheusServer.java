@@ -21,9 +21,12 @@ import com.hivemq.extension.sdk.api.annotations.Nullable;
 import com.hivemq.extensions.prometheus.configuration.PrometheusExtensionConfiguration;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.dropwizard.DropwizardExports;
+import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +38,11 @@ import java.net.InetSocketAddress;
  * @author Daniel Krüger
  */
 public class PrometheusServer {
+
+    /* Minimum thread count for Jetty's thread pool */
+    public static final int MIN_THREADS = 3;
+    /* Maximum thread count for Jetty's thread pool */
+    public static final int MAX_THREADS = 8;
 
     @NotNull
     private static final Logger log = LoggerFactory.getLogger(PrometheusServer.class);
@@ -52,7 +60,15 @@ public class PrometheusServer {
     public PrometheusServer(@NotNull final PrometheusExtensionConfiguration configuration, @NotNull final MetricRegistry metricRegistry) {
         this.configuration = configuration;
         this.metricRegistry = metricRegistry;
-        server = new Server(new InetSocketAddress(configuration.hostIp(), configuration.port()));
+        // Set sane thread pool limits (this being a metrics extension)
+        QueuedThreadPool queuedThreadPool = new QueuedThreadPool();
+        queuedThreadPool.setMinThreads(MIN_THREADS);
+        queuedThreadPool.setMaxThreads(MAX_THREADS);
+        this.server = new Server(queuedThreadPool);
+        ServerConnector connector = new ServerConnector(server);
+        connector.setHost(configuration.hostIp());
+        connector.setPort(configuration.port());
+        this.server.setConnectors(new Connector[]{connector});
     }
 
 
@@ -71,7 +87,7 @@ public class PrometheusServer {
             log.error("Error starting the Jetty Server for Prometheus Extension");
             log.debug("Original exception was:", e);
         }
-        log.info("Started Jetty Server exposing Prometheus Servlet on URI {}", server.getURI()+configuration.metricPath());
+        log.info("Started Jetty Server exposing Prometheus Servlet on URI {}", server.getURI() + configuration.metricPath());
     }
 
     public void stop() {
