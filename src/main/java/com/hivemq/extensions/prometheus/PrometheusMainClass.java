@@ -67,6 +67,8 @@ public class PrometheusMainClass implements ExtensionMain {
 
     @Override
     public void extensionStop(@NotNull final ExtensionStopInput extensionStopInput, @NotNull final ExtensionStopOutput extensionStopOutput) {
-        prometheusServer.stop();
+        if (prometheusServer != null) {
+            prometheusServer.stop();
+        }
     }
 }
