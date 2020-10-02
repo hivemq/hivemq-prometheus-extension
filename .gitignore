@@ -1,10 +1,15 @@
-/target/
-/.idea/libraries/
-/.idea/cssxfire.xml
-/.idea/workspace.xml
+# Gradle
+.gradle
+build/
+
+# IntelliJ
+out/
+
+.idea/*
+!.idea/codeStyles
+!.idea/inspectionProfiles
+!.idea/runConfigurations
+.java-version
 .DS_Store
-/.idea/
+
 /hivemq4-prometheus-extension.iml
-
-
-dependency-reduced-pom.xml
