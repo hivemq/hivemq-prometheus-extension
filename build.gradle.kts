@@ -40,7 +40,7 @@ dependencies {
     implementation("org.aeonbits.owner:owner:${property("owner.version")}")
 
     testImplementation("org.mockito:mockito-all:${property("mockito-all.version")}")
-    testImplementation("junit:junit', version:${property("junit.version")}")
+    testImplementation("junit:junit:${property("junit.version")}")
     testImplementation("com.hivemq:hivemq-testcontainer-junit4:${property("hivemq-testcontainer.version")}")
     testImplementation("commons-io:commons-io:${property("commons-io.version")}")
 }

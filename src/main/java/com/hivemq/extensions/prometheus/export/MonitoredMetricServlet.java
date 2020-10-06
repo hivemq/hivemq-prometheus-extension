@@ -25,10 +25,8 @@ import io.prometheus.client.exporter.MetricsServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 import static com.codahale.metrics.MetricRegistry.name;
 
@@ -55,12 +53,15 @@ class MonitoredMetricServlet extends MetricsServlet {
 
 
     @Override
-    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        log.debug("Received HTTP-Get-Request from Prometheus to scrape metrics from HiveMQ.", req.toString());
+    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) {
+        log.debug("Received HTTP-Get-Request from Prometheus to scrape metrics from HiveMQ: {}", req.toString());
         final Timer.Context context = responses.time();
-        super.doGet(req, resp);
+       try{
+            super.doGet(req, resp);
+        }catch(Exception e){
+           log.warn("Exception occurred while collection of metrics and creation of Prometheus Servlet: {}.", e.getClass().getSimpleName());
+           log.debug("Original exception was :",  e);
+       }
         context.stop();
     }
-
-
 }
