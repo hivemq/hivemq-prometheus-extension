@@ -4,12 +4,11 @@ build/
 
 # IntelliJ
 out/
-
+*.iml
 .idea/*
 !.idea/codeStyles
 !.idea/inspectionProfiles
 !.idea/runConfigurations
+
 .java-version
 .DS_Store
-
-/hivemq4-prometheus-extension.iml

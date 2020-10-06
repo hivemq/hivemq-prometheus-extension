@@ -29,8 +29,6 @@ tasks.asciidoctor {
     sourceDir(prepareAsciidocTask.get().outputs.files.asPath)
 }
 
-
-
 dependencies {
     implementation("io.prometheus:simpleclient_dropwizard:${property("simpleclient-dropwizard.version")}")
     implementation("io.prometheus:simpleclient_servlet:${property("simpleclient-servlet.version")}")
@@ -39,14 +37,7 @@ dependencies {
     implementation("org.eclipse.jetty:jetty-servlet:${property("jetty-servlet.version")}")
     implementation("org.aeonbits.owner:owner:${property("owner.version")}")
 
-    testImplementation("org.mockito:mockito-all:${property("mockito-all.version")}")
     testImplementation("junit:junit:${property("junit.version")}")
-    testImplementation("com.hivemq:hivemq-testcontainer-junit4:${property("hivemq-testcontainer.version")}")
+    testImplementation("org.mockito:mockito-all:${property("mockito.version")}")
     testImplementation("commons-io:commons-io:${property("commons-io.version")}")
 }
-
-
-
-
-
-
