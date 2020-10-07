@@ -29,14 +29,14 @@ tasks.asciidoctor {
 }
 
 dependencies {
-    implementation("io.prometheus:simpleclient_dropwizard:${property("simpleclient.version")}")
-    implementation("io.prometheus:simpleclient_servlet:${property("simpleclient.version")}")
-    implementation("io.prometheus:simpleclient_common:${property("simpleclient.version")}")
+    implementation("io.prometheus:simpleclient:${property("prometheus-simpleclient.version")}")
+    implementation("io.prometheus:simpleclient_dropwizard:${property("prometheus-simpleclient.version")}")
+    implementation("io.prometheus:simpleclient_servlet:${property("prometheus-simpleclient.version")}")
     implementation("org.eclipse.jetty:jetty-server:${property("jetty.version")}")
     implementation("org.eclipse.jetty:jetty-servlet:${property("jetty.version")}")
+    implementation("org.eclipse.jetty:jetty-util:${property("jetty.version")}")
     implementation("org.aeonbits.owner:owner:${property("owner.version")}")
 
     testImplementation("junit:junit:${property("junit.version")}")
     testImplementation("org.mockito:mockito-all:${property("mockito.version")}")
-    testImplementation("commons-io:commons-io:${property("commons-io.version")}")
 }
