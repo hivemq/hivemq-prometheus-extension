@@ -4,7 +4,4 @@ pluginManagement {
         id("org.asciidoctor.jvm.convert") version "${extra["plugin.asciidoctor.version"]}"
     }
 }
-
-
-
 rootProject.name = "hivemq-prometheus-extension"

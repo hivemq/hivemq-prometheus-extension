@@ -18,7 +18,6 @@ tasks.hivemqExtensionResources {
     from("LICENSE.txt")
     from("README.adoc") { rename { "README.txt" } }
     from(tasks.asciidoctor)
-    from("src/main/resources/prometheusConfiguration.properties")
 }
 
 val prepareAsciidocTask = tasks.register<Sync>("prepareAsciidoc") {
