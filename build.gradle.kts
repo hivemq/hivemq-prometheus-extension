@@ -3,19 +3,19 @@ plugins {
     id("org.asciidoctor.jvm.convert")
 }
 
-group = "com.hivemq"
-description = "Prometheus Monitoring Extension"
+group = "com.hivemq.extensions"
+description = "HiveMQ extension to utilize Prometheus for monitoring"
 
 hivemqExtension {
     name = "Prometheus Monitoring Extension"
     author = "HiveMQ"
-    priority = 0
+    priority = 1000
     startPriority = 0
     sdkVersion = "${property("hivemq-extension-sdk.version")}"
 }
 
 tasks.hivemqExtensionResources {
-    from("LICENSE")
+    from("LICENSE.txt")
     from("README.adoc") { rename { "README.txt" } }
     from(tasks.asciidoctor)
     from("src/main/resources/prometheusConfiguration.properties")
@@ -30,11 +30,11 @@ tasks.asciidoctor {
 }
 
 dependencies {
-    implementation("io.prometheus:simpleclient_dropwizard:${property("simpleclient-dropwizard.version")}")
-    implementation("io.prometheus:simpleclient_servlet:${property("simpleclient-servlet.version")}")
-    implementation("io.prometheus:simpleclient_common:${property("simpleclient-common.version")}")
-    implementation("org.eclipse.jetty:jetty-server:${property("jetty-server.version")}")
-    implementation("org.eclipse.jetty:jetty-servlet:${property("jetty-servlet.version")}")
+    implementation("io.prometheus:simpleclient_dropwizard:${property("simpleclient.version")}")
+    implementation("io.prometheus:simpleclient_servlet:${property("simpleclient.version")}")
+    implementation("io.prometheus:simpleclient_common:${property("simpleclient.version")}")
+    implementation("org.eclipse.jetty:jetty-server:${property("jetty.version")}")
+    implementation("org.eclipse.jetty:jetty-servlet:${property("jetty.version")}")
     implementation("org.aeonbits.owner:owner:${property("owner.version")}")
 
     testImplementation("junit:junit:${property("junit.version")}")

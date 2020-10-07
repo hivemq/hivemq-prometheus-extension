@@ -56,12 +56,12 @@ class MonitoredMetricServlet extends MetricsServlet {
     protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) {
         log.debug("Received HTTP-Get-Request from Prometheus to scrape metrics from HiveMQ: {}", req.toString());
         final Timer.Context context = responses.time();
-       try{
+        try {
             super.doGet(req, resp);
-        }catch(Exception e){
-           log.warn("Exception occurred while collection of metrics and creation of Prometheus Servlet: {}.", e.getClass().getSimpleName());
-           log.debug("Original exception was :",  e);
-       }
+        } catch (Exception e) {
+            log.warn("Exception occurred while collection of metrics and creation of Prometheus Servlet: {}.", e.getClass().getSimpleName());
+            log.debug("Original exception was :", e);
+        }
         context.stop();
     }
 }
