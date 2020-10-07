@@ -58,9 +58,9 @@ class MonitoredMetricServlet extends MetricsServlet {
         final Timer.Context context = responses.time();
         try {
             super.doGet(req, resp);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log.warn("Exception occurred while collecting metrics and creating of Prometheus response: {}.", e.getClass().getSimpleName());
-            log.debug("Original exception was:", e);
+            log.debug("Original exception was: ", e);
         }
         context.stop();
     }
