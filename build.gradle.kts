@@ -1,5 +1,6 @@
 plugins {
     id("com.hivemq.extension")
+    id("com.github.hierynomus.license")
     id("org.asciidoctor.jvm.convert")
 }
 
@@ -39,4 +40,9 @@ dependencies {
 
     testImplementation("junit:junit:${property("junit.version")}")
     testImplementation("org.mockito:mockito-all:${property("mockito.version")}")
+}
+
+license {
+    header = rootDir.resolve("HEADER")
+    mapping("java", "SLASHSTAR_STYLE")
 }
