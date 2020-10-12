@@ -21,12 +21,13 @@ tasks.hivemqExtensionResources {
     from(tasks.asciidoctor)
 }
 
-val prepareAsciidocTask = tasks.register<Sync>("prepareAsciidoc") {
-    from("README.adoc").into(buildDir.resolve("tmp/asciidoc"))
+val prepareAsciidoc by tasks.registering(Sync::class) {
+    from("README.adoc").into({ temporaryDir })
 }
+
 tasks.asciidoctor {
-    dependsOn(prepareAsciidocTask)
-    sourceDir(prepareAsciidocTask.get().outputs.files.asPath)
+    dependsOn(prepareAsciidoc)
+    sourceDir(prepareAsciidoc.map { it.destinationDir })
 }
 
 dependencies {
