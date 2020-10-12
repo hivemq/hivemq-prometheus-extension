@@ -15,21 +15,6 @@ hivemqExtension {
     sdkVersion = "${property("hivemq-extension-sdk.version")}"
 }
 
-tasks.hivemqExtensionResources {
-    from("LICENSE.txt")
-    from("README.adoc") { rename { "README.txt" } }
-    from(tasks.asciidoctor)
-}
-
-val prepareAsciidoc by tasks.registering(Sync::class) {
-    from("README.adoc").into({ temporaryDir })
-}
-
-tasks.asciidoctor {
-    dependsOn(prepareAsciidoc)
-    sourceDir(prepareAsciidoc.map { it.destinationDir })
-}
-
 dependencies {
     implementation("io.prometheus:simpleclient:${property("prometheus-simpleclient.version")}")
     implementation("io.prometheus:simpleclient_dropwizard:${property("prometheus-simpleclient.version")}")
@@ -41,6 +26,21 @@ dependencies {
 
     testImplementation("junit:junit:${property("junit.version")}")
     testImplementation("org.mockito:mockito-all:${property("mockito.version")}")
+}
+
+val prepareAsciidoc by tasks.registering(Sync::class) {
+    from("README.adoc").into({ temporaryDir })
+}
+
+tasks.asciidoctor {
+    dependsOn(prepareAsciidoc)
+    sourceDir(prepareAsciidoc.map { it.destinationDir })
+}
+
+tasks.hivemqExtensionResources {
+    from("LICENSE.txt")
+    from("README.adoc") { rename { "README.txt" } }
+    from(tasks.asciidoctor)
 }
 
 license {
