@@ -1,11 +1,11 @@
 /*
- * Copyright 2018 dc-square GmbH
+ * Copyright 2018-present HiveMQ GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,10 +25,8 @@ import io.prometheus.client.exporter.MetricsServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 import static com.codahale.metrics.MetricRegistry.name;
 
@@ -55,12 +53,15 @@ class MonitoredMetricServlet extends MetricsServlet {
 
 
     @Override
-    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        log.debug("Received HTTP-Get-Request from Prometheus to scrape metrics from HiveMQ.", req.toString());
+    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) {
+        log.debug("Received HTTP-Get-Request from Prometheus to scrape metrics from HiveMQ: {}", req);
         final Timer.Context context = responses.time();
-        super.doGet(req, resp);
+        try {
+            super.doGet(req, resp);
+        } catch (final Exception e) {
+            log.warn("Exception occurred while collecting metrics and creating of Prometheus response: {}.", e.getClass().getSimpleName());
+            log.debug("Original exception was: ", e);
+        }
         context.stop();
     }
-
-
 }

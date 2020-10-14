@@ -1,23 +1,26 @@
 :hivemq-support: http://www.hivemq.com/support/
 
-== HiveMQ Prometheus Extension
+= HiveMQ Prometheus Extension
+
 *Extension Type*: Monitoring
 
 *Version*: 4.0.3
 
 *License*: Apache License 2.0
 
-=== Purpose
+== Purpose
+
 The Prometheus Monitoring extension allows HiveMQ to expose metrics to a Prometheus application.
 
-=== Installation
+== Installation
 
 . Unzip the file: `hivemq-prometheus-extension-<version>-distribution.zip` to the directory: `<HIVEMQ_HOME>/extensions`
 . A configuration file `prometheusConfiguration.properties` can be found in the `hivemq-prometheus-extension` folder.
 The properties are preconfigured with standard settings and can be adapted to your needs (The meaning of the fields is explained below).
 . Start HiveMQ.
 
-=== Configuration
+== Configuration
+
 The extension can be configured with the `prometheusConfiguration.properties` file, which is part of the `hivemq-prometheus-extension` folder.
 [cols="1m,1,2" options="header"]
 .Configuration Options
@@ -40,8 +43,8 @@ The extension can be configured with the `prometheusConfiguration.properties` fi
 
 |===
 
+== First Steps
 
-=== First Steps
 You can test your configuration by navigating to `<ip>:<port><metric_path>` (as configured in `prometheusConfiguration.properties`) in your browser.
 For example the address would be http://localhost:9399/metrics with default values.
 
@@ -53,8 +56,7 @@ com_hivemq_messages_incoming_publish_rate_total 0.0
 ...
 ----
 
-
-==== Final Steps
+== Final Steps
 
 . Load and install Prometheus
 . Configure Prometheus to scrape from <ip>:<port><metricPath> as configured in the prometheusConfiguration.properties.
@@ -77,15 +79,15 @@ scrape_configs:
       - targets: ['localhost:9399']
 ----
 
-==== Need help?
+== Need help?
 
 If you encounter any problems, we are happy to help. The best place to get in contact is our {hivemq-support}[support^].
 
-= Contributing
+== Contributing
 
 If you want to contribute to HiveMQ Prometheus Extension, see the link:CONTRIBUTING.adoc[contribution guidelines].
 
-= License
+== License
 
 HiveMQ Prometheus Extension is licensed under the `APACHE LICENSE, VERSION 2.0`. A copy of the license can be found link:LICENSE.txt[here].
 
