@@ -11,7 +11,7 @@ hivemqExtension {
     name = "Prometheus Monitoring Extension"
     author = "HiveMQ"
     priority = 1000
-    startPriority = 0
+    startPriority = 1000
     sdkVersion = "${property("hivemq-extension-sdk.version")}"
 }
 
