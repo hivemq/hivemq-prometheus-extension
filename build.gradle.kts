@@ -1,6 +1,7 @@
 plugins {
     id("com.hivemq.extension")
     id("com.github.hierynomus.license")
+    id("com.github.sgtsilvio.gradle.utf8")
     id("org.asciidoctor.jvm.convert")
 }
 
