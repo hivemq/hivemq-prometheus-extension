@@ -92,4 +92,4 @@ If you want to contribute to HiveMQ Prometheus Extension, see the link:CONTRIBUT
 == License
 
 HiveMQ Prometheus Extension is licensed under the `APACHE LICENSE, VERSION 2.0`.
-A copy of the license can be found link:LICENSE.txt[here].
+A copy of the license can be found link:LICENSE[here].
