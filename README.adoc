@@ -1,4 +1,5 @@
-:hivemq-support: http://www.hivemq.com/support/
+:hivemq-link: https://www.hivemq.com
+:hivemq-support: {hivemq-link}/support/
 
 = HiveMQ Prometheus Extension
 
@@ -79,15 +80,16 @@ scrape_configs:
       - targets: ['localhost:9399']
 ----
 
-== Need help?
+== Need Help?
 
-If you encounter any problems, we are happy to help. The best place to get in contact is our {hivemq-support}[support^].
+If you encounter any problems, we are happy to help.
+The best place to get in contact is our {hivemq-support}[support].
 
 == Contributing
 
-If you want to contribute to HiveMQ Prometheus Extension, see the link:CONTRIBUTING.adoc[contribution guidelines].
+If you want to contribute to HiveMQ Prometheus Extension, see the link:CONTRIBUTING.md[contribution guidelines].
 
 == License
 
-HiveMQ Prometheus Extension is licensed under the `APACHE LICENSE, VERSION 2.0`. A copy of the license can be found link:LICENSE.txt[here].
-
+HiveMQ Prometheus Extension is licensed under the `APACHE LICENSE, VERSION 2.0`.
+A copy of the license can be found link:LICENSE[here].
