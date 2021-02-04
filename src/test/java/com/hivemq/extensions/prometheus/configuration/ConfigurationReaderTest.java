@@ -28,6 +28,7 @@ import org.mockito.Mock;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -162,5 +163,17 @@ public class ConfigurationReaderTest {
         }
     }
 
+    @Test
+    public void test_successfully_read_labels_in_config() throws Exception {
+        configurationReader = new ConfigurationReader(extensionInformation);
+        when(extensionInformation.getExtensionHomeFolder()).thenReturn(temporaryFolder.getRoot());
 
+        final FileWriter out = new FileWriter(temporaryFolder.newFile(ConfigurationReader.CONFIG_PATH));
+
+        out.write("metric_path=/metrics\nip=127.0.0.1\nport=1234\nhttps.enabled=true\nlabels=host=some");
+        out.flush();
+        out.close();
+        final PrometheusExtensionConfiguration conf = configurationReader.readConfiguration();
+        assertEquals("Failed to read labels", "host=some", conf.labels());
+    }
 }

@@ -16,6 +16,7 @@
 
 package com.hivemq.extensions.prometheus.configuration;
 
+import com.hivemq.extension.sdk.api.annotations.Nullable;
 import org.aeonbits.owner.Config;
 
 import static org.aeonbits.owner.Config.DisableableFeature.PARAMETER_FORMATTING;
@@ -27,7 +28,8 @@ public interface PrometheusExtensionConfiguration extends Config {
     String METRIC_PATH_KEY = "metric_path";
     String IP_KEY = "ip";
     String PORT_KEY = "port";
-
+    String LABELS = "labels";
+    String SUFFIX = "suffix";
 
     @Key(PORT_KEY)
     int port();
@@ -37,4 +39,10 @@ public interface PrometheusExtensionConfiguration extends Config {
 
     @Key(METRIC_PATH_KEY)
     String metricPath();
+
+    @Key(LABELS)
+    @Nullable String labels();
+
+    @Key(SUFFIX)
+    @Nullable String suffix();
 }

@@ -24,6 +24,7 @@ dependencies {
     implementation("org.eclipse.jetty:jetty-servlet:${property("jetty.version")}")
     implementation("org.eclipse.jetty:jetty-util:${property("jetty.version")}")
     implementation("org.aeonbits.owner:owner:${property("owner.version")}")
+    implementation("org.apache.commons:commons-lang3:${property("commons-lang3.version")}")
 
     testImplementation("junit:junit:${property("junit.version")}")
     testImplementation("org.mockito:mockito-all:${property("mockito.version")}")
