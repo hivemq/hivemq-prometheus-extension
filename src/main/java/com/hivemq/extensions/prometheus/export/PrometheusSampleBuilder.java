@@ -19,6 +19,7 @@ package com.hivemq.extensions.prometheus.export;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extensions.prometheus.configuration.PrometheusExtensionConfiguration;
 import io.prometheus.client.Collector;
+import io.prometheus.client.dropwizard.samplebuilder.DefaultSampleBuilder;
 import io.prometheus.client.dropwizard.samplebuilder.SampleBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -31,14 +32,17 @@ public class PrometheusSampleBuilder implements SampleBuilder {
 
     private static final Logger log = LoggerFactory.getLogger(PrometheusSampleBuilder.class);
 
-    private String suffix = "";
-    private final List<String> labelNames = new ArrayList<>();
-    private final List<String> labelValues= new ArrayList<>();
+    private String configSuffix = "";
+    private final List<String> configLabelNames = new ArrayList<>();
+    private final List<String> configLabelValues = new ArrayList<>();
+
+    private final DefaultSampleBuilder defaultSampleBuilder = new DefaultSampleBuilder();
 
     public PrometheusSampleBuilder(@NotNull final PrometheusExtensionConfiguration extensionConfiguration) {
         setSuffix(extensionConfiguration.suffix());
         setLabels(extensionConfiguration.labels());
     }
+
 
     @Override
     public Collector.MetricFamilySamples.Sample createSample(
@@ -47,14 +51,31 @@ public class PrometheusSampleBuilder implements SampleBuilder {
             final List<String> additionalLabelNames,
             final List<String> additionalLabelValues,
             final double value) {
-        return new Collector.MetricFamilySamples.Sample(
-                Collector.sanitizeMetricName(dropwizardName + suffix), labelNames, labelValues, value
-        );
+
+        final String additionalSuffix = (nameSuffix == null) ? this.configSuffix : nameSuffix + this.configSuffix;
+
+        return defaultSampleBuilder.createSample(
+                dropwizardName,
+                additionalSuffix,
+                combineLists(additionalLabelNames, this.configLabelNames),
+                combineLists(additionalLabelValues, this.configLabelValues),
+                value);
     }
+
+    private List<String> combineLists(final List<String> additionalList, final List<String> configList) {
+        if (additionalList != null && additionalList.size() > 0) {
+            final List<String> composite = new ArrayList<>();
+            composite.addAll(additionalList);
+            composite.addAll(configList);
+            return composite;
+        }
+        return configList;
+    }
+
 
     private void setSuffix(final String confSuffix) {
         if (confSuffix != null && confSuffix.length() > 0) {
-            this.suffix = "." + confSuffix;
+            this.configSuffix = "." + confSuffix;
         }
     }
 
@@ -68,8 +89,8 @@ public class PrometheusSampleBuilder implements SampleBuilder {
                 if (labelPair.length != 2 || labelPair[0].length() < 1 || labelPair[1].length() < 1) {
                     log.info("Skipping invalid label '{}' for Prometheus in labels '{}'.", label, labels);
                 } else {
-                    labelNames.add(StringUtils.trim(labelPair[0]));
-                    labelValues.add(StringUtils.trim(labelPair[1]));
+                    this.configLabelNames.add(StringUtils.trim(labelPair[0]));
+                    this.configLabelValues.add(StringUtils.trim(labelPair[1]));
                 }
             }
         }
