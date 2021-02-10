@@ -17,6 +17,7 @@
 package com.hivemq.extensions.prometheus.export;
 
 import com.hivemq.extension.sdk.api.annotations.NotNull;
+import com.hivemq.extension.sdk.api.annotations.Nullable;
 import com.hivemq.extensions.prometheus.configuration.PrometheusExtensionConfiguration;
 import io.prometheus.client.Collector;
 import io.prometheus.client.dropwizard.samplebuilder.DefaultSampleBuilder;
@@ -27,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class PrometheusSampleBuilder implements SampleBuilder {
 
@@ -46,10 +48,10 @@ public class PrometheusSampleBuilder implements SampleBuilder {
 
     @Override
     public Collector.MetricFamilySamples.Sample createSample(
-            final String dropwizardName,
-            final String nameSuffix,
-            final List<String> additionalLabelNames,
-            final List<String> additionalLabelValues,
+            final @NotNull String dropwizardName,
+            final @Nullable String nameSuffix,
+            final @Nullable List<String> additionalLabelNames,
+            final @Nullable List<String> additionalLabelValues,
             final double value) {
 
         final String additionalSuffix = (nameSuffix == null) ? this.configSuffix : nameSuffix + this.configSuffix;
@@ -62,7 +64,7 @@ public class PrometheusSampleBuilder implements SampleBuilder {
                 value);
     }
 
-    private List<String> combineLists(final List<String> additionalList, final List<String> configList) {
+    private List<String> combineLists(final @Nullable List<String> additionalList, final @NotNull List<String> configList) {
         if (additionalList != null && additionalList.size() > 0) {
             final List<String> composite = new ArrayList<>();
             composite.addAll(additionalList);
@@ -73,26 +75,25 @@ public class PrometheusSampleBuilder implements SampleBuilder {
     }
 
 
-    private void setSuffix(final String confSuffix) {
+    private void setSuffix(final @Nullable String confSuffix) {
         if (confSuffix != null && confSuffix.length() > 0) {
             this.configSuffix = "." + confSuffix;
         }
     }
 
-    private void setLabels(final String labels) {
+    private void setLabels(final @Nullable String labels) {
         if (labels != null && labels.length() > 2) {
-
-            final String[] splitLabels = StringUtils.splitPreserveAllTokens(labels, ";");
-
-            for (final String label : splitLabels) {
-                final String[] labelPair = StringUtils.split(label, "=");
-                if (labelPair.length != 2 || labelPair[0].length() < 1 || labelPair[1].length() < 1) {
-                    log.info("Skipping invalid label '{}' for Prometheus in labels '{}'.", label, labels);
-                } else {
-                    this.configLabelNames.add(StringUtils.trim(labelPair[0]));
-                    this.configLabelValues.add(StringUtils.trim(labelPair[1]));
-                }
-            }
+            Stream.of(StringUtils.splitPreserveAllTokens(labels, ";")).forEach(
+                    label -> {
+                        final String[] labelPair = StringUtils.split(label, "=");
+                        if (labelPair.length != 2 || labelPair[0].length() < 1 || labelPair[1].length() < 1) {
+                            log.info("Skipping invalid label '{}' for Prometheus in labels '{}'.", label, labels);
+                        } else {
+                            this.configLabelNames.add(StringUtils.trim(labelPair[0]));
+                            this.configLabelValues.add(StringUtils.trim(labelPair[1]));
+                        }
+                    }
+            );
         }
     }
 }
