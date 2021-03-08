@@ -75,7 +75,7 @@ public class PrometheusServer {
 
     public void start() {
 
-        dropwizardExports = new DropwizardExports(metricRegistry);
+        dropwizardExports = new DropwizardExports(metricRegistry, new PrometheusSampleBuilder(configuration));
 
         CollectorRegistry.defaultRegistry.register(dropwizardExports);
         final ServletContextHandler context = new ServletContextHandler();

@@ -42,6 +42,14 @@ The extension can be configured with the `prometheusConfiguration.properties` fi
 |/metrics
 |The path for the service which gets called by Prometheus. It must start with a slash.
 
+|labels
+| -
+|An optional list of labels, that are attached to metrics, separated by semicolon. (host_ip=0.0.0.0;cluster=my-cluster)
+
+|suffix
+| -
+|An optional suffix that is appended to each metric name. (metric_name_suffix)
+
 |===
 
 == First Steps
