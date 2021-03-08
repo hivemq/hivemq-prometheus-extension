@@ -47,7 +47,7 @@ public class PrometheusSampleBuilder implements SampleBuilder {
 
 
     @Override
-    public Collector.MetricFamilySamples.Sample createSample(
+    public @NotNull Collector.MetricFamilySamples.Sample createSample(
             final @NotNull String dropwizardName,
             final @Nullable String nameSuffix,
             final @Nullable List<String> additionalLabelNames,
@@ -64,7 +64,7 @@ public class PrometheusSampleBuilder implements SampleBuilder {
                 value);
     }
 
-    private List<String> combineLists(final @Nullable List<String> additionalList, final @NotNull List<String> configList) {
+    private @NotNull List<String> combineLists(final @Nullable List<String> additionalList, final @NotNull List<String> configList) {
         if (additionalList != null && additionalList.size() > 0) {
             final List<String> composite = new ArrayList<>();
             composite.addAll(additionalList);
