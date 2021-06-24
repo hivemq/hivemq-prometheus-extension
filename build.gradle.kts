@@ -9,11 +9,11 @@ group = "com.hivemq.extensions"
 description = "HiveMQ extension to utilize Prometheus for monitoring"
 
 hivemqExtension {
-    name = "Prometheus Monitoring Extension"
-    author = "HiveMQ"
-    priority = 1000
-    startPriority = 1000
-    sdkVersion = "${property("hivemq-extension-sdk.version")}"
+    name.set("Prometheus Monitoring Extension")
+    author.set("HiveMQ")
+    priority.set(1000)
+    startPriority.set(1000)
+    sdkVersion.set("${property("hivemq-extension-sdk.version")}")
 }
 
 dependencies {
@@ -38,7 +38,7 @@ tasks.asciidoctor {
     sourceDir(prepareAsciidoc.map { it.destinationDir })
 }
 
-tasks.hivemqExtensionResources {
+hivemqExtension.resources {
     from("LICENSE")
     from("README.adoc") { rename { "README.txt" } }
     from(tasks.asciidoctor)
