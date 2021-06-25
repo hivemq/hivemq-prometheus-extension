@@ -24,10 +24,9 @@ dependencies {
     implementation("org.eclipse.jetty:jetty-servlet:${property("jetty.version")}")
     implementation("org.eclipse.jetty:jetty-util:${property("jetty.version")}")
     implementation("org.aeonbits.owner:owner:${property("owner.version")}")
-
-    testImplementation("junit:junit:${property("junit.version")}")
-    testImplementation("org.mockito:mockito-all:${property("mockito.version")}")
 }
+
+/* ******************** resources ******************** */
 
 val prepareAsciidoc by tasks.registering(Sync::class) {
     from("README.adoc").into({ temporaryDir })
@@ -43,6 +42,15 @@ hivemqExtension.resources {
     from("README.adoc") { rename { "README.txt" } }
     from(tasks.asciidoctor)
 }
+
+/* ******************** test ******************** */
+
+dependencies {
+    testImplementation("junit:junit:${property("junit.version")}")
+    testImplementation("org.mockito:mockito-all:${property("mockito.version")}")
+}
+
+/* ******************** checks ******************** */
 
 license {
     header = rootDir.resolve("HEADER")
