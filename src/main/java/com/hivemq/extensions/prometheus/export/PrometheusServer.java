@@ -31,8 +31,6 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetSocketAddress;
-
 /**
  * Class that handles start and stop of a server, to enable requests the Metrics via the {@link MonitoredMetricServlet}.
  *
@@ -88,7 +86,7 @@ public class PrometheusServer {
             log.error("Error starting the Jetty Server for Prometheus Extension");
             log.debug("Original exception was:", e);
         }
-        log.info("Started Jetty Server exposing Prometheus Servlet on URI {}", server.getURI() + configuration.metricPath());
+        log.info("Started Jetty Server exposing Prometheus Servlet on URI {}", trimTrailingSlash(server.getURI().toString()) + configuration.metricPath());
     }
 
     public void stop() {
@@ -99,5 +97,12 @@ public class PrometheusServer {
             log.error("Exception occurred while stopping the Prometheus Extension");
             log.debug("Original exception was: ", e);
         }
+    }
+
+    private @NotNull String trimTrailingSlash(final @NotNull String serverUri) {
+        if (serverUri.endsWith("/")) {
+            return serverUri.substring(0, serverUri.length() - 1);
+        }
+        return serverUri;
     }
 }
