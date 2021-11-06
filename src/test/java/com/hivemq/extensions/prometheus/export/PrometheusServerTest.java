@@ -17,80 +17,52 @@
 package com.hivemq.extensions.prometheus.export;
 
 import com.codahale.metrics.MetricRegistry;
-import com.hivemq.extension.sdk.api.parameter.ExtensionInformation;
+import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extensions.prometheus.configuration.PrometheusExtensionConfiguration;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.ServerSocket;
 import java.net.URL;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class PrometheusServerTest {
+class PrometheusServerTest {
 
+    private @NotNull PrometheusExtensionConfiguration config;
 
-    private PrometheusServer prometheusServer;
-
-    @Mock
-    ExtensionInformation extensionInformation;
-
-    @Mock
-    PrometheusExtensionConfiguration prometheusExtensionConfiguration;
-
-    final String host = "localhost";
-    int port;
-    final String path = "/metrics";
-
-    @Before
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
-        port = createRandomPort();
+    @BeforeEach
+    void setUp() {
+        final int port = createRandomPort();
+        config = mock(PrometheusExtensionConfiguration.class);
+        when(config.hostIp()).thenReturn("localhost");
+        when(config.port()).thenReturn(port);
+        when(config.metricPath()).thenReturn("/metrics");
     }
 
     @Test
-    public void test_start_successful() throws Exception {
-        when(prometheusExtensionConfiguration.hostIp()).thenReturn(host);
-        when(prometheusExtensionConfiguration.port()).thenReturn(port);
-        when(prometheusExtensionConfiguration.metricPath()).thenReturn(path);
-        prometheusServer = new PrometheusServer(prometheusExtensionConfiguration, new MetricRegistry());
+    void test_start_stop_successful() throws Exception {
+        final PrometheusServer prometheusServer = new PrometheusServer(config, new MetricRegistry());
         prometheusServer.start();
-        URL url = new URL("http://" + host + ":" + port + path);
-        HttpURLConnection con = (HttpURLConnection) url.openConnection();
-        con.setRequestMethod("GET");
-        assertEquals(200, con.getResponseCode());
-    }
-
-    @Test
-    public void test_stop_running_server() throws Exception {
-        when(prometheusExtensionConfiguration.hostIp()).thenReturn(host);
-        when(prometheusExtensionConfiguration.port()).thenReturn(port);
-        when(prometheusExtensionConfiguration.metricPath()).thenReturn(path);
-        prometheusServer = new PrometheusServer(prometheusExtensionConfiguration, new MetricRegistry());
-        prometheusServer.start();
-        URL url = new URL("http://" + host + ":" + port + path);
-        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        final URL url = new URL("http://" + config.hostIp() + ":" + config.port() + config.metricPath());
+        final HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("GET");
         assertEquals(200, con.getResponseCode());
         prometheusServer.stop();
     }
 
-
     private int createRandomPort() {
         try {
             final ServerSocket serverSocket = new ServerSocket(0);
-            int port = serverSocket.getLocalPort();
+            final int port = serverSocket.getLocalPort();
             serverSocket.close();
             return port;
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new RuntimeException(e);
         }
     }
-
 }

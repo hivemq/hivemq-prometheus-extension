@@ -46,8 +46,13 @@ hivemqExtension.resources {
 /* ******************** test ******************** */
 
 dependencies {
-    testImplementation("junit:junit:${property("junit.version")}")
-    testImplementation("org.mockito:mockito-all:${property("mockito.version")}")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:${property("junit-jupiter.version")}")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    testImplementation("org.mockito:mockito-core:${property("mockito.version")}")
+}
+
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
 }
 
 /* ******************** checks ******************** */
