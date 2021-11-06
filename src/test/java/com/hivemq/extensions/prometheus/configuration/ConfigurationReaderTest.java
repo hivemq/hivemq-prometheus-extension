@@ -16,151 +16,91 @@
 
 package com.hivemq.extensions.prometheus.configuration;
 
+import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.parameter.ExtensionInformation;
 import com.hivemq.extensions.prometheus.exception.InvalidConfigurationException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.mockito.Mock;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
 
-public class ConfigurationReaderTest {
+class ConfigurationReaderTest {
 
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
-    @Mock
-    private ConfigurationReader configurationReader;
-    @Mock
-    private ExtensionInformation extensionInformation;
+    private @NotNull ConfigurationReader configurationReader;
+    private @NotNull Path configPath;
 
-    @Before
-    public void init() {
-        initMocks(this);
+    @BeforeEach
+    void setUp(final @TempDir @NotNull Path tempDir) {
+        final ExtensionInformation extensionInformation = mock(ExtensionInformation.class);
+        when(extensionInformation.getExtensionHomeFolder()).thenReturn(tempDir.toFile());
+        configurationReader = new ConfigurationReader(extensionInformation);
+        configPath = tempDir.resolve(ConfigurationReader.CONFIG_PATH);
     }
 
+    @Test
+    void test_ReadConfiguration_no_file() {
+        assertThrows(FileNotFoundException.class, configurationReader::readConfiguration);
+    }
 
-    @Test(expected = FileNotFoundException.class)
-    public void test_ReadConfiguration_no_file() throws Exception {
-        when(extensionInformation.getExtensionHomeFolder()).thenReturn(temporaryFolder.getRoot());
-        ConfigurationReader configurationReader = new ConfigurationReader(extensionInformation);
+    @Test
+    void test_successfully_read_config() throws Exception {
+        Files.writeString(configPath, "metric_path=/metrics\nip=127.0.0.1\nsenseless=nonsense\nport=1234");
         configurationReader.readConfiguration();
     }
 
     @Test
-    public void test_successfully_read_config() throws Exception {
-        configurationReader = new ConfigurationReader(extensionInformation);
-        when(extensionInformation.getExtensionHomeFolder()).thenReturn(temporaryFolder.getRoot());
-
-        FileWriter out = new FileWriter(temporaryFolder.newFile(ConfigurationReader.CONFIG_PATH));
-
-        out.write("metric_path=/metrics\nip=127.0.0.1\nsenseless=nonsense\nport=1234");
-        out.flush();
-        out.close();
-        configurationReader.readConfiguration();
+    void test_bad_format_port() throws Exception {
+        Files.writeString(configPath, "metric_path=/metrics\nip=127.0.0.1\nsenseless=nonsense\nport=localhost");
+        final InvalidConfigurationException e =
+                assertThrows(InvalidConfigurationException.class, configurationReader::readConfiguration);
+        assertTrue(e.getMessage().contains("port"));
     }
 
-
-    @Test(expected = InvalidConfigurationException.class)
-    public void test_bad_format_port() throws Exception {
-        configurationReader = new ConfigurationReader(extensionInformation);
-        when(extensionInformation.getExtensionHomeFolder()).thenReturn(temporaryFolder.getRoot());
-
-        try (FileWriter out = new FileWriter(temporaryFolder.newFile(ConfigurationReader.CONFIG_PATH))) {
-            out.write("metric_path=/metrics\nip=127.0.0.1\nsenseless=nonsense\nport=localhost");
-            out.flush();
-            configurationReader.readConfiguration();
-        } catch (InvalidConfigurationException e) {
-            Assert.assertTrue(e.getMessage().contains("port"));
-            throw e;
-        }
+    @Test
+    void test_bad_format_host() throws Exception {
+        Files.writeString(configPath, "metric_path=/metrics\nip= \nsenseless=nonsense\nport=1234");
+        final InvalidConfigurationException e =
+                assertThrows(InvalidConfigurationException.class, configurationReader::readConfiguration);
+        assertTrue(e.getMessage().contains("ip"));
     }
 
-
-    @Test(expected = InvalidConfigurationException.class)
-    public void test_bad_format_host() throws Exception {
-        configurationReader = new ConfigurationReader(extensionInformation);
-        when(extensionInformation.getExtensionHomeFolder()).thenReturn(temporaryFolder.getRoot());
-
-        try (FileWriter out = new FileWriter(temporaryFolder.newFile(ConfigurationReader.CONFIG_PATH))) {
-            out.write("metric_path=/metrics\nip= \nsenseless=nonsense\nport=1234");
-            out.flush();
-            configurationReader.readConfiguration();
-        } catch (InvalidConfigurationException e) {
-            Assert.assertTrue(e.getMessage().contains("ip"));
-            throw e;
-        }
+    @Test
+    void test_bad_format_metric_path() throws Exception {
+        Files.writeString(configPath, "metric_path=metrics\nip=127.0.0.1\nsenseless=nonsensen\nport=1234");
+        final InvalidConfigurationException e =
+                assertThrows(InvalidConfigurationException.class, configurationReader::readConfiguration);
+        assertTrue(e.getMessage().contains("metric_path"));
     }
 
-    @Test(expected = InvalidConfigurationException.class)
-    public void test_bad_format_metric_path() throws Exception {
-        configurationReader = new ConfigurationReader(extensionInformation);
-        when(extensionInformation.getExtensionHomeFolder()).thenReturn(temporaryFolder.getRoot());
-
-        try (FileWriter out = new FileWriter(temporaryFolder.newFile(ConfigurationReader.CONFIG_PATH))) {
-            out.write("metric_path=metrics\nip=127.0.0.1\nsenseless=nonsensen\nport=1234");
-            out.flush();
-
-            configurationReader.readConfiguration();
-        } catch (InvalidConfigurationException e) {
-            Assert.assertTrue(e.getMessage().contains("metric_path"));
-            throw e;
-        }
+    @Test
+    void test_typo_metric_path() throws Exception {
+        Files.writeString(configPath, "metric_ph=metrics\nip=127.0.0.1\nsenseless=nonsense\nport=1234");
+        final InvalidConfigurationException e =
+                assertThrows(InvalidConfigurationException.class, configurationReader::readConfiguration);
+        assertTrue(e.getMessage().contains("metric_path"));
     }
 
-
-    @Test(expected = InvalidConfigurationException.class)
-    public void test_typo_metric_path() throws Exception {
-        configurationReader = new ConfigurationReader(extensionInformation);
-        when(extensionInformation.getExtensionHomeFolder()).thenReturn(temporaryFolder.getRoot());
-
-        try (FileWriter out = new FileWriter(temporaryFolder.newFile(ConfigurationReader.CONFIG_PATH))) {
-            out.write("metric_ph=metrics\nip=127.0.0.1\nsenseless=nonsense\nport=1234");
-            out.flush();
-
-            configurationReader.readConfiguration();
-        } catch (InvalidConfigurationException e) {
-
-            Assert.assertTrue(e.getMessage().contains("metric_path"));
-            throw e;
-        }
+    @Test
+    void test_typo_ip() throws Exception {
+        Files.writeString(configPath, "metric_path=metrics\nIP=127.0.0.1\nsenseless=nonsense\nport=1234");
+        final InvalidConfigurationException e =
+                assertThrows(InvalidConfigurationException.class, configurationReader::readConfiguration);
+        assertTrue(e.getMessage().contains("ip"));
     }
 
-    @Test(expected = InvalidConfigurationException.class)
-    public void test_typo_ip() throws Exception {
-        configurationReader = new ConfigurationReader(extensionInformation);
-        when(extensionInformation.getExtensionHomeFolder()).thenReturn(temporaryFolder.getRoot());
-
-        try (FileWriter out = new FileWriter(temporaryFolder.newFile(ConfigurationReader.CONFIG_PATH))) {
-            out.write("metric_path=metrics\nIP=127.0.0.1\nsenseless=nonsense\nport=1234");
-            out.flush();
-            configurationReader.readConfiguration();
-        } catch (InvalidConfigurationException e) {
-            Assert.assertTrue(e.getMessage().contains("ip"));
-            throw e;
-        }
+    @Test
+    void test_typo_port() throws Exception {
+        Files.writeString(configPath, "metric_path=metrics\nip=127.0.0.1\nsenseless=nonsense\npot=1234");
+        final InvalidConfigurationException e =
+                assertThrows(InvalidConfigurationException.class, configurationReader::readConfiguration);
+        assertTrue(e.getMessage().contains("port"));
     }
-
-    @Test(expected = InvalidConfigurationException.class)
-    public void test_typo_port() throws Exception {
-        configurationReader = new ConfigurationReader(extensionInformation);
-        when(extensionInformation.getExtensionHomeFolder()).thenReturn(temporaryFolder.getRoot());
-
-        try (FileWriter out = new FileWriter(temporaryFolder.newFile(ConfigurationReader.CONFIG_PATH))) {
-            out.write("metric_path=metrics\nip=127.0.0.1\nsenseless=nonsense\npot=1234");
-            out.flush();
-            configurationReader.readConfiguration();
-        } catch (InvalidConfigurationException e) {
-            Assert.assertTrue(e.getMessage().contains("port"));
-            throw e;
-        }
-    }
-
-
 }
