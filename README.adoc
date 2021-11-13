@@ -3,11 +3,10 @@
 
 = HiveMQ Prometheus Extension
 
-*Extension Type*: Monitoring
-
-*Version*: 4.0.3
-
-*License*: Apache License 2.0
+image:https://img.shields.io/badge/Extension_Type-Monitoring-orange?style=for-the-badge[Extension Type]
+image:https://img.shields.io/github/v/release/hivemq/hivemq-prometheus-extension?style=for-the-badge[GitHub release (latest by date), link=https://github.com/hivemq/hivemq-prometheus-extension/releases/latest]
+image:https://img.shields.io/github/license/hivemq/hivemq-prometheus-extension?style=for-the-badge&color=brightgreen[GitHub, link=LICENSE]
+image:https://img.shields.io/github/workflow/status/hivemq/hivemq-prometheus-extension/CI%20Check/master?style=for-the-badge[GitHub Workflow Status (branch), link=https://github.com/hivemq/hivemq-prometheus-extension/actions/workflows/check.yml?query=branch%3Amaster]
 
 == Purpose
 
