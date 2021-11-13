@@ -4,9 +4,9 @@
 = HiveMQ Prometheus Extension
 
 image:https://img.shields.io/badge/Extension_Type-Monitoring-orange?style=for-the-badge[Extension Type]
-image:https://img.shields.io/github/v/release/hivemq/hivemq-prometheus-extension?style=for-the-badge[GitHub release (latest by date), link=https://github.com/hivemq/hivemq-prometheus-extension/releases/latest]
-image:https://img.shields.io/github/license/hivemq/hivemq-prometheus-extension?style=for-the-badge&color=brightgreen[GitHub, link=LICENSE]
-image:https://img.shields.io/github/workflow/status/hivemq/hivemq-prometheus-extension/CI%20Check/master?style=for-the-badge[GitHub Workflow Status (branch), link=https://github.com/hivemq/hivemq-prometheus-extension/actions/workflows/check.yml?query=branch%3Amaster]
+image:https://img.shields.io/github/v/release/hivemq/hivemq-prometheus-extension?style=for-the-badge[GitHub release (latest by date),link=https://github.com/hivemq/hivemq-prometheus-extension/releases/latest]
+image:https://img.shields.io/github/license/hivemq/hivemq-prometheus-extension?style=for-the-badge&color=brightgreen[GitHub,link=LICENSE]
+image:https://img.shields.io/github/workflow/status/hivemq/hivemq-prometheus-extension/CI%20Check/master?style=for-the-badge[GitHub Workflow Status (branch),link=https://github.com/hivemq/hivemq-prometheus-extension/actions/workflows/check.yml?query=branch%3Amaster]
 
 == Purpose
 
@@ -22,6 +22,7 @@ The properties are preconfigured with standard settings and can be adapted to yo
 == Configuration
 
 The extension can be configured with the `prometheusConfiguration.properties` file, which is part of the `hivemq-prometheus-extension` folder.
+
 [cols="1m,1,2" options="header"]
 .Configuration Options
 |===
@@ -39,7 +40,8 @@ The extension can be configured with the `prometheusConfiguration.properties` fi
 
 |metric_path
 |/metrics
-|The path for the service which gets called by Prometheus. It must start with a slash.
+|The path for the service which gets called by Prometheus.
+It must start with a slash.
 
 |===
 
@@ -49,6 +51,7 @@ You can test your configuration by navigating to `<ip>:<port><metric_path>` (as 
 For example the address would be http://localhost:9399/metrics with default values.
 
 You should see data provided by the extension:
+
 ----
 # HELP com_hivemq_messages_incoming_publish_rate_total Generated from Dropwizard metric import (metric=com.hivemq.messages.incoming.publish.rate, type=com.codahale.metrics.Meter)
 # TYPE com_hivemq_messages_incoming_publish_rate_total counter
@@ -60,7 +63,8 @@ com_hivemq_messages_incoming_publish_rate_total 0.0
 
 . Load and install Prometheus
 . Configure Prometheus to scrape from <ip>:<port><metricPath> as configured in the prometheusConfiguration.properties.
-. Look at the website provided by your Prometheus application. You should be able to find the HiveMQ metrics.
+. Look at the website provided by your Prometheus application.
+You should be able to find the HiveMQ metrics.
 
 For detailed information please visit:  https://prometheus.io/docs/operating/configuration/
 
