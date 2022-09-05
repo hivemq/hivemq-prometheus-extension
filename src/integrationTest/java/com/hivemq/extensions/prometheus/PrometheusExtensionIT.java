@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hivemq.extensions.helloworld;
+package com.hivemq.extensions.prometheus;
 
 import com.codahale.metrics.MetricRegistry;
 import com.hivemq.extension.sdk.api.ExtensionMain;
