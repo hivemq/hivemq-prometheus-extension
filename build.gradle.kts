@@ -55,6 +55,18 @@ tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 }
 
+/* ******************** integration test ******************** */
+
+dependencies {
+    integrationTestImplementation("org.assertj:assertj-core:${property("assertj.version")}")
+    integrationTestImplementation("com.hivemq:hivemq-mqtt-client:${property("hivemq-mqtt-client.version")}")
+    integrationTestImplementation("com.squareup.okhttp3:okhttp:${property("okhttp.version")}")
+    integrationTestImplementation("org.testcontainers:junit-jupiter:${property("testcontainers.version")}")
+    integrationTestImplementation("org.testcontainers:hivemq:${property("testcontainers.version")}")
+    integrationTestRuntimeOnly("ch.qos.logback:logback-classic:${property("logback.version")}")
+}
+
+
 /* ******************** checks ******************** */
 
 license {
