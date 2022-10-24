@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentCaptor;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -37,16 +38,16 @@ class PrometheusMainClassTest {
     private final @NotNull PrometheusMainClass prometheusMainClass = new PrometheusMainClass();
     private @NotNull ExtensionStartInput extensionStartInput;
     private @NotNull ExtensionStartOutput extensionStartOutput;
-    @TempDir
-    Path tempDir;
+    private @NotNull Path configPath;
 
     @BeforeEach
-    void setUp() {
+    void setUp(@TempDir final @NotNull Path tempDir) {
         extensionStartInput = mock(ExtensionStartInput.class);
         extensionStartOutput = mock(ExtensionStartOutput.class);
         final ExtensionInformation extensionInformation = mock(ExtensionInformation.class);
         when(extensionStartInput.getExtensionInformation()).thenReturn(extensionInformation);
         when(extensionInformation.getExtensionHomeFolder()).thenReturn(tempDir.toFile());
+        configPath = tempDir.resolve(ConfigurationReader.CONFIG_PATH);
     }
 
     @Test
@@ -59,7 +60,7 @@ class PrometheusMainClassTest {
 
     @Test
     void test_start_extension_fail_corrupt_configfile() throws Exception {
-        assertTrue(tempDir.resolve(ConfigurationReader.CONFIG_PATH).toFile().createNewFile());
+        Files.createFile(configPath);
         prometheusMainClass.extensionStart(extensionStartInput, extensionStartOutput);
         verify(extensionStartOutput, times(1)).preventExtensionStartup(anyString());
     }
