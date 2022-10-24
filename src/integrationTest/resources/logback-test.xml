@@ -31,7 +31,4 @@
     <logger name="org.testcontainers" level="INFO"/>
     <logger name="com.github.dockerjava" level="WARN"/>
 
-    <!-- silence netty -->
-    <logger name="io.netty" level="WARN"/>
-
 </configuration>
