@@ -38,6 +38,7 @@ import org.testcontainers.utility.MountableFile;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -50,8 +51,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Testcontainers
 class PrometheusExtensionIT {
 
-    public static final @NotNull DockerImageName DOCKER_IMAGE_NAME =
-            DockerImageName.parse("hivemq/hivemq4").withTag("latest");
+    final @NotNull DockerImageName DOCKER_IMAGE_NAME = DockerImageName.parse("hivemq/hivemq4").withTag("latest");
 
     @Container
     final @NotNull HiveMQContainer hivemq = new HiveMQContainer(DOCKER_IMAGE_NAME) //
@@ -105,8 +105,7 @@ class PrometheusExtensionIT {
 
         final String responseString;
         try (final Response response = new OkHttpClient().newCall(request).execute()) {
-            //noinspection ConstantConditions
-            responseString = response.body().string();
+            responseString = Objects.requireNonNull(response.body()).string();
         }
 
         return responseString.lines()
@@ -128,14 +127,12 @@ class PrometheusExtensionIT {
             metricRegistry.counter("myCounter").inc();
             metricRegistry.gauge("myGauge", () -> () -> 1.0f);
             metricRegistry.histogram("myHistogram").update(1);
-
         }
 
         @Override
         public void extensionStop(
                 final @NotNull ExtensionStopInput extensionStopInput,
                 final @NotNull ExtensionStopOutput extensionStopOutput) {
-
         }
     }
 }
