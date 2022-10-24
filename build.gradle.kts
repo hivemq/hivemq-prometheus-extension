@@ -46,8 +46,7 @@ hivemqExtension.resources {
 /* ******************** test ******************** */
 
 dependencies {
-    testImplementation("org.junit.jupiter:junit-jupiter-api:${property("junit-jupiter.version")}")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    testImplementation("org.junit.jupiter:junit-jupiter:${property("junit-jupiter.version")}")
     testImplementation("org.mockito:mockito-core:${property("mockito.version")}")
 }
 
@@ -59,13 +58,12 @@ tasks.withType<Test>().configureEach {
 
 dependencies {
     integrationTestImplementation("org.assertj:assertj-core:${property("assertj.version")}")
-    integrationTestImplementation("com.hivemq:hivemq-mqtt-client:${property("hivemq-mqtt-client.version")}")
     integrationTestImplementation("com.squareup.okhttp3:okhttp:${property("okhttp.version")}")
-    integrationTestImplementation("org.testcontainers:junit-jupiter:${property("testcontainers.version")}")
-    integrationTestImplementation("org.testcontainers:hivemq:${property("testcontainers.version")}")
+    integrationTestImplementation(platform("org.testcontainers:testcontainers-bom:${property("testcontainers.version")}"))
+    integrationTestImplementation("org.testcontainers:junit-jupiter")
+    integrationTestImplementation("org.testcontainers:hivemq")
     integrationTestRuntimeOnly("ch.qos.logback:logback-classic:${property("logback.version")}")
 }
-
 
 /* ******************** checks ******************** */
 
