@@ -19,7 +19,6 @@ package com.hivemq.extensions.prometheus.export;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
-import com.hivemq.extension.sdk.api.annotations.Nullable;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.exporter.MetricsServlet;
 import org.slf4j.Logger;
@@ -30,38 +29,35 @@ import javax.servlet.http.HttpServletResponse;
 
 import static com.codahale.metrics.MetricRegistry.name;
 
-
 /**
- * This class extends the {@link MetricsServlet} by measuring the duration of the get-method and adds it to the {@link MetricRegistry}.
+ * This class extends the {@link MetricsServlet} by measuring the duration of the get-method and adds it to the
+ * {@link MetricRegistry}.
  *
  * @author Daniel Krüger
  */
 class MonitoredMetricServlet extends MetricsServlet {
+
     private static final long serialVersionUID = 3841226821748298393L;
 
-    @NotNull
-    private static final Logger log = LoggerFactory.getLogger(MonitoredMetricServlet.class);
-    @NotNull
-    private static final String metricTopic = "get.time";
-    @Nullable
-    private final Timer responses;
+    private static final @NotNull Logger log = LoggerFactory.getLogger(MonitoredMetricServlet.class);
+    private static final @NotNull String metricTopic = "get.time";
+    private final @NotNull Timer responses;
 
-    MonitoredMetricServlet(@NotNull final MetricRegistry metricRegistry) {
+    MonitoredMetricServlet(final @NotNull MetricRegistry metricRegistry) {
         super(CollectorRegistry.defaultRegistry);
         this.responses = metricRegistry.timer(name(MonitoredMetricServlet.class, metricTopic));
     }
 
-
     @Override
-    protected void doGet(final HttpServletRequest req, final HttpServletResponse resp) {
+    protected void doGet(final @NotNull HttpServletRequest req, final @NotNull HttpServletResponse resp) {
         log.debug("Received HTTP-Get-Request from Prometheus to scrape metrics from HiveMQ: {}", req);
-        final Timer.Context context = responses.time();
-        try {
+        try (final Timer.Context ignored = responses.time()) {
             super.doGet(req, resp);
         } catch (final Exception e) {
-            log.warn("Exception occurred while collecting metrics and creating of Prometheus response: {}.", e.getClass().getSimpleName());
+            log.warn(
+                    "Exception occurred while collecting metrics and creating of Prometheus response: {}.",
+                    e.getClass().getSimpleName());
             log.debug("Original exception was: ", e);
         }
-        context.stop();
     }
 }

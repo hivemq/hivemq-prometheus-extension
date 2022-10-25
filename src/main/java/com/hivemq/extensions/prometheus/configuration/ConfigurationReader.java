@@ -16,6 +16,7 @@
 
 package com.hivemq.extensions.prometheus.configuration;
 
+import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.parameter.ExtensionInformation;
 import com.hivemq.extensions.prometheus.exception.InvalidConfigurationException;
 import org.aeonbits.owner.ConfigFactory;
@@ -36,7 +37,7 @@ public class ConfigurationReader {
     /**
      * The path of the prometheusConfiguration.properties file relative to the HiveMQ conf folder
      */
-    public static final String CONFIG_PATH = "prometheusConfiguration.properties";
+    public static final @NotNull String CONFIG_PATH = "prometheusConfiguration.properties";
     /**
      * The minimal possible  port
      */
@@ -46,22 +47,23 @@ public class ConfigurationReader {
      */
     private static final int MAX_PORT = 65535;
 
-    private final ExtensionInformation extensionInformation;
+    private final @NotNull ExtensionInformation extensionInformation;
 
-    public ConfigurationReader(final ExtensionInformation extensionInformation) {
+    public ConfigurationReader(final @NotNull ExtensionInformation extensionInformation) {
         this.extensionInformation = extensionInformation;
     }
 
-
     /**
      * @return the {@link PrometheusExtensionConfiguration} which holds the configuration-information
-     * @throws FileNotFoundException         if the prometheusConfiguration.properties is not found in the conf folder of HiveMQ
+     * @throws FileNotFoundException         if the prometheusConfiguration.properties is not found in the conf folder
+     *                                       of HiveMQ
      * @throws InvalidConfigurationException if the configuration cannot be initiated due to other critical errors
-     * @throws Exception                     if the configuration can not be initialized correctly due to unknown exception
+     * @throws Exception                     if the configuration can not be initialized correctly due to unknown
+     *                                       exception
      */
-    public PrometheusExtensionConfiguration readConfiguration() throws Exception {
+    public @NotNull PrometheusExtensionConfiguration readConfiguration()
+            throws FileNotFoundException, InvalidConfigurationException {
         final File file = new File(extensionInformation.getExtensionHomeFolder(), CONFIG_PATH);
-
 
         if (!file.canRead()) {
             throw new FileNotFoundException(file.getAbsolutePath());
@@ -73,7 +75,8 @@ public class ConfigurationReader {
 
             testAllPropertiesDeclared(properties);
 
-            final PrometheusExtensionConfiguration prometheusExtensionConfiguration = ConfigFactory.create(PrometheusExtensionConfiguration.class, properties);
+            final PrometheusExtensionConfiguration prometheusExtensionConfiguration =
+                    ConfigFactory.create(PrometheusExtensionConfiguration.class, properties);
 
             testConfiguration(prometheusExtensionConfiguration);
             return prometheusExtensionConfiguration;
@@ -82,17 +85,16 @@ public class ConfigurationReader {
         }
     }
 
-
     /**
      * In the ConfigFactory.create() it is not tested whether the entries make sense (here e.g. port holds a int)
      *
      * @param config config to be tested
      * @throws InvalidConfigurationException thrown when a entry makes no sense or does not meet the requirements
      */
-    private void testConfiguration(final PrometheusExtensionConfiguration config) throws InvalidConfigurationException {
+    private void testConfiguration(final @NotNull PrometheusExtensionConfiguration config)
+            throws InvalidConfigurationException {
         boolean error = false;
         final StringBuilder sb = new StringBuilder();
-
 
         //test port
         try {
@@ -119,60 +121,55 @@ public class ConfigurationReader {
         }
 
         if (error) {
-            final String msg = "Error while parsing and testing the configuration: " + sb.toString();
-            throw new InvalidConfigurationException(msg);
+            throw new InvalidConfigurationException("Error while parsing and testing the configuration: " + sb);
         }
     }
 
-    private void testPortSense(final PrometheusExtensionConfiguration config) throws InvalidConfigurationException {
+    private void testPortSense(final @NotNull PrometheusExtensionConfiguration config)
+            throws InvalidConfigurationException {
         try {
             config.port();
         } catch (final Exception e) {
             throw new InvalidConfigurationException("Invalid port configuration");
         }
         final int port = config.port();
-
         if (port < MIN_PORT) {
-            throw new InvalidConfigurationException("The port must not be smaller than " + MIN_PORT + "." + " Value was " + port + ".");
+            throw new InvalidConfigurationException(
+                    "The port must not be smaller than " + MIN_PORT + "." + " Value was " + port + ".");
         }
-
         if (port > MAX_PORT) {
-            throw new InvalidConfigurationException("The port must not be greater than " + MAX_PORT + "." + " Value was " + port + ".");
+            throw new InvalidConfigurationException(
+                    "The port must not be greater than " + MAX_PORT + "." + " Value was " + port + ".");
         }
     }
 
-    private void testIpSense(final PrometheusExtensionConfiguration config) throws InvalidConfigurationException {
+    private void testIpSense(final @NotNull PrometheusExtensionConfiguration config)
+            throws InvalidConfigurationException {
         try {
             config.hostIp();
         } catch (final Exception e) {
             throw new InvalidConfigurationException("Invalid host ip configuration.");
         }
-
-
         final String ip = config.hostIp();
         if (ip.trim().length() == 0) {
             throw new InvalidConfigurationException("The ip must not be blank.");
         }
-
-
     }
 
-    private void testMetricsPathSense(final PrometheusExtensionConfiguration config) throws InvalidConfigurationException {
+    private void testMetricsPathSense(final @NotNull PrometheusExtensionConfiguration config)
+            throws InvalidConfigurationException {
         try {
             config.metricPath();
         } catch (final Exception e) {
             throw new InvalidConfigurationException("Invalid metric_path configuration.");
         }
-
-
         final String path = config.metricPath();
         if (!path.startsWith("/")) {
             throw new InvalidConfigurationException("The metric_path must begin with a slash, f.e. \"/metrics\".");
         }
     }
 
-
-    private void testAllPropertiesDeclared(final Properties properties) throws InvalidConfigurationException {
+    private void testAllPropertiesDeclared(final @NotNull Properties properties) throws InvalidConfigurationException {
         boolean error = false;
         final StringBuilder sb = new StringBuilder();
 
@@ -189,10 +186,7 @@ public class ConfigurationReader {
             error = true;
         }
         if (error) {
-            final String msg = "Missing required configuration of:" + sb.toString() + ".";
-            throw new InvalidConfigurationException(msg);
+            throw new InvalidConfigurationException("Missing required configuration of:" + sb + ".");
         }
     }
-
-
 }

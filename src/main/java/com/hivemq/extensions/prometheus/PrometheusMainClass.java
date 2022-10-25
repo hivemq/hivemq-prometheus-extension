@@ -18,6 +18,7 @@ package com.hivemq.extensions.prometheus;
 
 import com.hivemq.extension.sdk.api.ExtensionMain;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
+import com.hivemq.extension.sdk.api.annotations.Nullable;
 import com.hivemq.extension.sdk.api.parameter.ExtensionStartInput;
 import com.hivemq.extension.sdk.api.parameter.ExtensionStartOutput;
 import com.hivemq.extension.sdk.api.parameter.ExtensionStopInput;
@@ -30,7 +31,6 @@ import com.hivemq.extensions.prometheus.export.PrometheusServer;
 
 import java.io.FileNotFoundException;
 
-
 /**
  * This is the main class of the  prometheus extension, which is instantiated during the HiveMQ start up process.
  *
@@ -38,22 +38,26 @@ import java.io.FileNotFoundException;
  */
 public class PrometheusMainClass implements ExtensionMain {
 
-    private PrometheusServer prometheusServer;
+    private @Nullable PrometheusServer prometheusServer;
 
     @Override
-    public void extensionStart(@NotNull final ExtensionStartInput extensionStartInput, @NotNull final ExtensionStartOutput extensionStartOutput) {
+    public void extensionStart(
+            final @NotNull ExtensionStartInput extensionStartInput,
+            final @NotNull ExtensionStartOutput extensionStartOutput) {
 
         final PrometheusExtensionConfiguration configuration;
         try {
             configuration = new ConfigurationReader(extensionStartInput.getExtensionInformation()).readConfiguration();
         } catch (final FileNotFoundException e) {
-            extensionStartOutput.preventExtensionStartup("The configuration file: " + e.getMessage() + " could not be read");
+            extensionStartOutput.preventExtensionStartup(
+                    "The configuration file: " + e.getMessage() + " could not be read");
             return;
         } catch (final InvalidConfigurationException e) {
             extensionStartOutput.preventExtensionStartup(e.getMessage());
             return;
         } catch (final Exception e) {
-            extensionStartOutput.preventExtensionStartup("Unknown error while reading configuration file" + ((e.getMessage() != null) ? ": " + e.getMessage() : ""));
+            extensionStartOutput.preventExtensionStartup("Unknown error while reading configuration file" +
+                    ((e.getMessage() != null) ? ": " + e.getMessage() : ""));
             return;
         }
         if (configuration == null) {
@@ -66,7 +70,9 @@ public class PrometheusMainClass implements ExtensionMain {
     }
 
     @Override
-    public void extensionStop(@NotNull final ExtensionStopInput extensionStopInput, @NotNull final ExtensionStopOutput extensionStopOutput) {
+    public void extensionStop(
+            final @NotNull ExtensionStopInput extensionStopInput,
+            final @NotNull ExtensionStopOutput extensionStopOutput) {
         if (prometheusServer != null) {
             prometheusServer.stop();
         }
