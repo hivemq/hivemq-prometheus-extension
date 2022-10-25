@@ -32,7 +32,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Class that handles start and stop of a server, to enable requests the Metrics via the {@link MonitoredMetricServlet}.
+ * Class that handles start and stop of a server, to enable requests the Metrics via the
+ * {@link MonitoredMetricServlet}.
  *
  * @author Daniel Krüger
  */
@@ -43,33 +44,28 @@ public class PrometheusServer {
     /* Maximum thread count for Jetty's thread pool */
     public static final int MAX_THREADS = 8;
 
-    @NotNull
-    private static final Logger log = LoggerFactory.getLogger(PrometheusServer.class);
-    @Nullable
-    private PrometheusExtensionConfiguration configuration;
-    @NotNull
-    private final MetricRegistry metricRegistry;
+    private static final @NotNull Logger log = LoggerFactory.getLogger(PrometheusServer.class);
 
-    @Nullable
-    private DropwizardExports dropwizardExports;
+    private final @NotNull PrometheusExtensionConfiguration configuration;
+    private final @NotNull MetricRegistry metricRegistry;
+    private final @NotNull Server server;
+    private @Nullable DropwizardExports dropwizardExports;
 
-    @NotNull
-    private final Server server;
-
-    public PrometheusServer(@NotNull final PrometheusExtensionConfiguration configuration, @NotNull final MetricRegistry metricRegistry) {
+    public PrometheusServer(
+            final @NotNull PrometheusExtensionConfiguration configuration,
+            final @NotNull MetricRegistry metricRegistry) {
         this.configuration = configuration;
         this.metricRegistry = metricRegistry;
         // Set sane thread pool limits (this being a metrics extension)
-        QueuedThreadPool queuedThreadPool = new QueuedThreadPool();
+        final QueuedThreadPool queuedThreadPool = new QueuedThreadPool();
         queuedThreadPool.setMinThreads(MIN_THREADS);
         queuedThreadPool.setMaxThreads(MAX_THREADS);
         this.server = new Server(queuedThreadPool);
-        ServerConnector connector = new ServerConnector(server);
+        final ServerConnector connector = new ServerConnector(server);
         connector.setHost(configuration.hostIp());
         connector.setPort(configuration.port());
         this.server.setConnectors(new Connector[]{connector});
     }
-
 
     public void start() {
 
@@ -86,7 +82,9 @@ public class PrometheusServer {
             log.error("Error starting the Jetty Server for Prometheus Extension");
             log.debug("Original exception was:", e);
         }
-        log.info("Started Jetty Server exposing Prometheus Servlet on URI {}", trimTrailingSlash(server.getURI().toString()) + configuration.metricPath());
+        log.info(
+                "Started Jetty Server exposing Prometheus Servlet on URI {}",
+                trimTrailingSlash(server.getURI().toString()) + configuration.metricPath());
     }
 
     public void stop() {

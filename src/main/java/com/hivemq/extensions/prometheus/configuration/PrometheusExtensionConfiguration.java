@@ -28,7 +28,6 @@ public interface PrometheusExtensionConfiguration extends Config {
     String IP_KEY = "ip";
     String PORT_KEY = "port";
 
-
     @Key(PORT_KEY)
     int port();
 

@@ -16,15 +16,18 @@
 
 package com.hivemq.extensions.prometheus.exception;
 
+import com.hivemq.extension.sdk.api.annotations.NotNull;
+
 /**
  * An exception which indicates a wrong configuration, e.g. not putting an mandatory field, wrong values, ...
  *
  * @author Daniel Krüger
  */
 public class InvalidConfigurationException extends Exception {
+
     private static final long serialVersionUID = -6216153002463951736L;
 
-    public InvalidConfigurationException(final String message) {
+    public InvalidConfigurationException(final @NotNull String message) {
         super(message);
     }
 }
