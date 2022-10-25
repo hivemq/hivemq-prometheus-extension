@@ -60,10 +60,6 @@ public class PrometheusMainClass implements ExtensionMain {
                     ((e.getMessage() != null) ? ": " + e.getMessage() : ""));
             return;
         }
-        if (configuration == null) {
-            extensionStartOutput.preventExtensionStartup("Unspecified error occurred while reading configuration");
-            return;
-        }
 
         prometheusServer = new PrometheusServer(configuration, Services.metricRegistry());
         prometheusServer.start();
