@@ -38,9 +38,9 @@ import static com.codahale.metrics.MetricRegistry.name;
 class MonitoredMetricServlet extends MetricsServlet {
 
     private static final long serialVersionUID = 3841226821748298393L;
-
     private static final @NotNull Logger log = LoggerFactory.getLogger(MonitoredMetricServlet.class);
     private static final @NotNull String metricTopic = "get.time";
+
     private final @NotNull Timer responses;
 
     MonitoredMetricServlet(final @NotNull MetricRegistry metricRegistry) {
@@ -54,8 +54,7 @@ class MonitoredMetricServlet extends MetricsServlet {
         try (final Timer.Context ignored = responses.time()) {
             super.doGet(req, resp);
         } catch (final Exception e) {
-            log.warn(
-                    "Exception occurred while collecting metrics and creating of Prometheus response: {}.",
+            log.warn("Exception occurred while collecting metrics and creating of Prometheus response: {}.",
                     e.getClass().getSimpleName());
             log.debug("Original exception was: ", e);
         }

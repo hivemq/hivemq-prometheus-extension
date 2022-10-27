@@ -134,12 +134,18 @@ public class ConfigurationReader {
         }
         final int port = config.port();
         if (port < MIN_PORT) {
-            throw new InvalidConfigurationException(
-                    "The port must not be smaller than " + MIN_PORT + "." + " Value was " + port + ".");
+            throw new InvalidConfigurationException("The port must not be smaller than " +
+                    MIN_PORT +
+                    ". Value was " +
+                    port +
+                    ".");
         }
         if (port > MAX_PORT) {
-            throw new InvalidConfigurationException(
-                    "The port must not be greater than " + MAX_PORT + "." + " Value was " + port + ".");
+            throw new InvalidConfigurationException("The port must not be greater than " +
+                    MAX_PORT +
+                    ". Value was " +
+                    port +
+                    ".");
         }
     }
 

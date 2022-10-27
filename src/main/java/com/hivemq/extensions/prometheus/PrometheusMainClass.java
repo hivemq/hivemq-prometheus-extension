@@ -49,8 +49,9 @@ public class PrometheusMainClass implements ExtensionMain {
         try {
             configuration = new ConfigurationReader(extensionStartInput.getExtensionInformation()).readConfiguration();
         } catch (final FileNotFoundException e) {
-            extensionStartOutput.preventExtensionStartup(
-                    "The configuration file: " + e.getMessage() + " could not be read");
+            extensionStartOutput.preventExtensionStartup("The configuration file: " +
+                    e.getMessage() +
+                    " could not be read");
             return;
         } catch (final InvalidConfigurationException e) {
             extensionStartOutput.preventExtensionStartup(e.getMessage());

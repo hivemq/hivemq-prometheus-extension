@@ -60,11 +60,11 @@ public class PrometheusServer {
         final QueuedThreadPool queuedThreadPool = new QueuedThreadPool();
         queuedThreadPool.setMinThreads(MIN_THREADS);
         queuedThreadPool.setMaxThreads(MAX_THREADS);
-        this.server = new Server(queuedThreadPool);
+        server = new Server(queuedThreadPool);
         final ServerConnector connector = new ServerConnector(server);
         connector.setHost(configuration.hostIp());
         connector.setPort(configuration.port());
-        this.server.setConnectors(new Connector[]{connector});
+        server.setConnectors(new Connector[]{connector});
     }
 
     public void start() {
@@ -82,8 +82,7 @@ public class PrometheusServer {
             log.error("Error starting the Jetty Server for Prometheus Extension");
             log.debug("Original exception was:", e);
         }
-        log.info(
-                "Started Jetty Server exposing Prometheus Servlet on URI {}",
+        log.info("Started Jetty Server exposing Prometheus Servlet on URI {}",
                 trimTrailingSlash(server.getURI().toString()) + configuration.metricPath());
     }
 

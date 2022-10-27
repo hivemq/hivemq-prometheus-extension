@@ -69,8 +69,7 @@ class PrometheusExtensionIT {
     @Test
     @Timeout(value = 5, unit = TimeUnit.MINUTES)
     void test_payload_modified() throws Exception {
-        assertMetrics(Map.of(
-                "myCounter",
+        assertMetrics(Map.of("myCounter",
                 1,
                 "myGauge",
                 1,
