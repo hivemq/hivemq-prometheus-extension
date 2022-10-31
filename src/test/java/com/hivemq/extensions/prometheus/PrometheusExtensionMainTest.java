@@ -36,9 +36,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
-class PrometheusMainClassTest {
+class PrometheusExtensionMainTest {
 
-    private final @NotNull PrometheusMainClass prometheusMainClass = new PrometheusMainClass();
+    private final @NotNull PrometheusExtensionMain prometheusExtensionMain = new PrometheusExtensionMain();
     private @NotNull ExtensionStartInput extensionStartInput;
     private @NotNull ExtensionStartOutput extensionStartOutput;
     private @NotNull Path configPath;
@@ -55,7 +55,7 @@ class PrometheusMainClassTest {
 
     @Test
     void test_start_extension_fail_no_configfile() {
-        prometheusMainClass.extensionStart(extensionStartInput, extensionStartOutput);
+        prometheusExtensionMain.extensionStart(extensionStartInput, extensionStartOutput);
         final ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
         verify(extensionStartOutput, times(1)).preventExtensionStartup(stringCaptor.capture());
         assertTrue(stringCaptor.getValue().contains("could not be read"));
@@ -64,7 +64,7 @@ class PrometheusMainClassTest {
     @Test
     void test_start_extension_fail_corrupt_configfile() throws Exception {
         Files.createFile(configPath);
-        prometheusMainClass.extensionStart(extensionStartInput, extensionStartOutput);
+        prometheusExtensionMain.extensionStart(extensionStartInput, extensionStartOutput);
         verify(extensionStartOutput, times(1)).preventExtensionStartup(anyString());
     }
 }

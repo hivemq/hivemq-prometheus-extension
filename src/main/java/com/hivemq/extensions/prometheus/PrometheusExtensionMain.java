@@ -36,7 +36,7 @@ import java.io.FileNotFoundException;
  *
  * @author Daniel Krüger
  */
-public class PrometheusMainClass implements ExtensionMain {
+public class PrometheusExtensionMain implements ExtensionMain {
 
     private @Nullable PrometheusServer prometheusServer;
 
