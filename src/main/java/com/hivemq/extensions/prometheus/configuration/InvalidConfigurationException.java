@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.hivemq.extensions.prometheus.exception;
+package com.hivemq.extensions.prometheus.configuration;
 
 import com.hivemq.extension.sdk.api.annotations.NotNull;
 

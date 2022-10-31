@@ -18,7 +18,6 @@ package com.hivemq.extensions.prometheus.configuration;
 
 import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.parameter.ExtensionInformation;
-import com.hivemq.extensions.prometheus.exception.InvalidConfigurationException;
 import org.aeonbits.owner.ConfigFactory;
 
 import java.io.File;

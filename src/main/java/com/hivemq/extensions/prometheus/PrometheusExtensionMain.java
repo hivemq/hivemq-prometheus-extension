@@ -25,8 +25,8 @@ import com.hivemq.extension.sdk.api.parameter.ExtensionStopInput;
 import com.hivemq.extension.sdk.api.parameter.ExtensionStopOutput;
 import com.hivemq.extension.sdk.api.services.Services;
 import com.hivemq.extensions.prometheus.configuration.ConfigurationReader;
+import com.hivemq.extensions.prometheus.configuration.InvalidConfigurationException;
 import com.hivemq.extensions.prometheus.configuration.PrometheusExtensionConfiguration;
-import com.hivemq.extensions.prometheus.exception.InvalidConfigurationException;
 import com.hivemq.extensions.prometheus.export.PrometheusServer;
 
 import java.io.FileNotFoundException;
