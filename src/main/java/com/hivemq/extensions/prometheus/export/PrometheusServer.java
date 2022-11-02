@@ -40,9 +40,9 @@ import org.slf4j.LoggerFactory;
 public class PrometheusServer {
 
     /* Minimum thread count for Jetty's thread pool */
-    public static final int MIN_THREADS = 3;
+    private static final int MIN_THREADS = 3;
     /* Maximum thread count for Jetty's thread pool */
-    public static final int MAX_THREADS = 8;
+    private static final int MAX_THREADS = 8;
 
     private static final @NotNull Logger log = LoggerFactory.getLogger(PrometheusServer.class);
 
@@ -68,10 +68,9 @@ public class PrometheusServer {
     }
 
     public void start() {
-
         dropwizardExports = new DropwizardExports(metricRegistry);
-
         CollectorRegistry.defaultRegistry.register(dropwizardExports);
+
         final ServletContextHandler context = new ServletContextHandler();
         context.setContextPath("/");
         server.setHandler(context);

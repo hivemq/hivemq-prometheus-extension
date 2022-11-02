@@ -85,7 +85,6 @@ class PrometheusExtensionIT {
                 1,
                 "myHistogram_count",
                 1));
-
         System.out.println(getPrometheusMetrics());
     }
 
@@ -120,9 +119,7 @@ class PrometheusExtensionIT {
         public void extensionStart(
                 final @NotNull ExtensionStartInput extensionStartInput,
                 final @NotNull ExtensionStartOutput extensionStartOutput) {
-
             final MetricRegistry metricRegistry = Services.metricRegistry();
-
             metricRegistry.counter("myCounter").inc();
             metricRegistry.gauge("myGauge", () -> () -> 1.0f);
             metricRegistry.histogram("myHistogram").update(1);

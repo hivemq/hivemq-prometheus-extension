@@ -37,7 +37,7 @@ class ConfigurationReaderTest {
     private @NotNull Path configPath;
 
     @BeforeEach
-    void setUp(final @TempDir @NotNull Path tempDir) {
+    void setUp(@TempDir final @NotNull Path tempDir) {
         final ExtensionInformation extensionInformation = mock(ExtensionInformation.class);
         when(extensionInformation.getExtensionHomeFolder()).thenReturn(tempDir.toFile());
         configurationReader = new ConfigurationReader(extensionInformation);
