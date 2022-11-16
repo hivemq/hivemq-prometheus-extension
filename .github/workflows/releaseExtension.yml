@@ -3,9 +3,6 @@ name: Release Extension
 on:
   release:
     types: [ published ]
-env:
-  PROJECT_NAME: 
-
 jobs:
   release:
     runs-on: ubuntu-latest
