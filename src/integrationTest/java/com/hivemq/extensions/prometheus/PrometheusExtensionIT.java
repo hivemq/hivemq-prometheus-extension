@@ -86,8 +86,7 @@ class PrometheusExtensionIT {
                 "myHistogram_count",
                 1,
                 "myMeter_total",
-                1.0
-        ));
+                1.0));
     }
 
     private void assertMetrics(final @NotNull Map<String, Number> metrics) throws IOException {
