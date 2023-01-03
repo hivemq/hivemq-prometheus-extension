@@ -34,7 +34,7 @@ The extension can be configured with the `prometheusConfiguration.properties` fi
 |9399
 |The port which the servlet will listen to.
 
-|host
+|ip
 |0.0.0.0
 |The bind-address which the servlet will listen to.
 
