@@ -84,8 +84,9 @@ class PrometheusExtensionIT {
                 "myHistogram{quantile=\"0.999\",}",
                 1,
                 "myHistogram_count",
-                1));
-        System.out.println(getPrometheusMetrics());
+                1,
+                "myMeter_total",
+                1.0));
     }
 
     private void assertMetrics(final @NotNull Map<String, Number> metrics) throws IOException {
@@ -122,6 +123,7 @@ class PrometheusExtensionIT {
             final MetricRegistry metricRegistry = Services.metricRegistry();
             metricRegistry.counter("myCounter").inc();
             metricRegistry.gauge("myGauge", () -> () -> 1.0f);
+            metricRegistry.meter("myMeter").mark();
             metricRegistry.histogram("myHistogram").update(1);
         }
 
