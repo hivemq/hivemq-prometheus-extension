@@ -14,6 +14,12 @@ hivemqExtension {
     priority.set(1000)
     startPriority.set(1000)
     sdkVersion.set("${property("hivemq-extension-sdk.version")}")
+
+    resources {
+        from("LICENSE")
+        from("README.adoc") { rename { "README.txt" } }
+        from(tasks.asciidoctor)
+    }
 }
 
 dependencies {
@@ -26,21 +32,10 @@ dependencies {
     implementation("org.aeonbits.owner:owner:${property("owner.version")}")
 }
 
-/* ******************** resources ******************** */
-
-val prepareAsciidoc by tasks.registering(Sync::class) {
-    from("README.adoc").into({ temporaryDir })
-}
-
 tasks.asciidoctor {
-    dependsOn(prepareAsciidoc)
-    sourceDir(prepareAsciidoc.map { it.destinationDir })
-}
-
-hivemqExtension.resources {
-    from("LICENSE")
-    from("README.adoc") { rename { "README.txt" } }
-    from(tasks.asciidoctor)
+    sourceDirProperty.set(layout.projectDirectory)
+    sources("README.adoc")
+    secondarySources { exclude("**") }
 }
 
 /* ******************** test ******************** */
