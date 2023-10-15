@@ -52,11 +52,13 @@ tasks.withType<Test>().configureEach {
 /* ******************** integration test ******************** */
 
 dependencies {
+    integrationTestCompileOnly("org.jetbrains:annotations:${property("jetbrains-annotations.version")}")
     integrationTestImplementation(platform("org.testcontainers:testcontainers-bom:${property("testcontainers.version")}"))
     integrationTestImplementation("org.testcontainers:junit-jupiter")
     integrationTestImplementation("org.testcontainers:hivemq")
     integrationTestImplementation("org.assertj:assertj-core:${property("assertj.version")}")
     integrationTestImplementation("com.squareup.okhttp3:okhttp:${property("okhttp.version")}")
+    integrationTestImplementation("com.hivemq:hivemq-extension-sdk:${property("hivemq-extension-sdk.version")}")
     integrationTestRuntimeOnly("ch.qos.logback:logback-classic:${property("logback.version")}")
 }
 
