@@ -25,7 +25,6 @@ owner = { module = "org.aeonbits.owner:owner", version.ref = "owner" }
 prometheus-simpleClient = { module = "io.prometheus:simpleclient", version.ref = "prometheus-simpleClient" }
 prometheus-simpleClient-dropwizard = { module = "io.prometheus:simpleclient_dropwizard", version.ref = "prometheus-simpleClient" }
 prometheus-simpleClient-servlet = { module = "io.prometheus:simpleclient_servlet", version.ref = "prometheus-simpleClient" }
-testcontainers-bom = { module = "org.testcontainers:testcontainers-bom", version.ref = "testcontainers" }
 testcontainers-hivemq = { module = "org.testcontainers:hivemq", version.ref = "testcontainers" }
 testcontainers-junitJupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
 

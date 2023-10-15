@@ -53,7 +53,6 @@ testing {
             dependencies {
                 compileOnly(libs.jetbrains.annotations)
                 implementation(libs.assertj)
-                implementation(platform(libs.testcontainers.bom))
                 implementation(libs.testcontainers.junitJupiter)
                 implementation(libs.testcontainers.hivemq)
                 implementation(libs.hivemq.extensionSdk)
