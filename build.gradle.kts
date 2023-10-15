@@ -38,31 +38,31 @@ tasks.asciidoctor {
     secondarySources { exclude("**") }
 }
 
-/* ******************** test ******************** */
-
-dependencies {
-    testImplementation(libs.junit.jupiter)
-    testImplementation(libs.mockito)
+@Suppress("UnstableApiUsage")
+testing {
+    suites {
+        withType<JvmTestSuite> {
+            useJUnitJupiter(libs.versions.junit.jupiter)
+        }
+        "test"(JvmTestSuite::class) {
+            dependencies {
+                implementation(libs.mockito)
+            }
+        }
+        "integrationTest"(JvmTestSuite::class) {
+            dependencies {
+                compileOnly(libs.jetbrains.annotations)
+                implementation(libs.assertj)
+                implementation(platform(libs.testcontainers.bom))
+                implementation(libs.testcontainers.junitJupiter)
+                implementation(libs.testcontainers.hivemq)
+                implementation(libs.hivemq.extensionSdk)
+                implementation(libs.okhttp)
+                runtimeOnly(libs.logback.classic)
+            }
+        }
+    }
 }
-
-tasks.withType<Test>().configureEach {
-    useJUnitPlatform()
-}
-
-/* ******************** integration test ******************** */
-
-dependencies {
-    integrationTestCompileOnly(libs.jetbrains.annotations)
-    integrationTestImplementation(platform(libs.testcontainers.bom))
-    integrationTestImplementation(libs.testcontainers.junitJupiter)
-    integrationTestImplementation(libs.testcontainers.hivemq)
-    integrationTestImplementation(libs.assertj)
-    integrationTestImplementation(libs.okhttp)
-    integrationTestImplementation(libs.hivemq.extensionSdk)
-    integrationTestRuntimeOnly(libs.logback.classic)
-}
-
-/* ******************** checks ******************** */
 
 license {
     header = rootDir.resolve("HEADER")
