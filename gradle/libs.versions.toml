@@ -1,0 +1,37 @@
+[versions]
+assertj = "3.23.1"
+hivemq-extensionSdk = "4.1.0"
+jetbrains-annotations = "24.0.1"
+jetty = "10.0.13" # version 11 breaks the Prometheus API
+junit-jupiter = "5.9.1"
+logback = "1.4.4"
+mockito = "4.8.1"
+okhttp = "4.10.0"
+owner = "1.0.10"
+prometheus-simpleClient = "0.16.0"
+testcontainers = "1.17.5"
+
+[libraries]
+assertj = { module = "org.assertj:assertj-core", version.ref = "assertj" }
+hivemq-extensionSdk = { module = "com.hivemq:hivemq-extension-sdk", version.ref = "hivemq-extensionSdk" }
+jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "jetbrains-annotations" }
+jetty-server = { module = "org.eclipse.jetty:jetty-server", version.ref = "jetty" }
+jetty-servlet = { module = "org.eclipse.jetty:jetty-servlet", version.ref = "jetty" }
+jetty-util = { module = "org.eclipse.jetty:jetty-util", version.ref = "jetty" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+mockito = { module = "org.mockito:mockito-core", version.ref = "mockito" }
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+owner = { module = "org.aeonbits.owner:owner", version.ref = "owner" }
+prometheus-simpleClient = { module = "io.prometheus:simpleclient", version.ref = "prometheus-simpleClient" }
+prometheus-simpleClient-dropwizard = { module = "io.prometheus:simpleclient_dropwizard", version.ref = "prometheus-simpleClient" }
+prometheus-simpleClient-servlet = { module = "io.prometheus:simpleclient_servlet", version.ref = "prometheus-simpleClient" }
+testcontainers-bom = { module = "org.testcontainers:testcontainers-bom", version.ref = "testcontainers" }
+testcontainers-hivemq = { module = "org.testcontainers:hivemq", version.ref = "testcontainers" }
+testcontainers-junitJupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
+
+[plugins]
+hivemq-extension = { id = "com.hivemq.extension", version = "3.1.0" }
+defaults = { id = "io.github.sgtsilvio.gradle.defaults", version = "0.2.0" }
+license = { id = "com.github.hierynomus.license", version = "0.16.1" }
+asciidoctor = { id = "org.asciidoctor.jvm.convert", version = "3.3.2" }

@@ -1,8 +1,8 @@
 plugins {
-    id("com.hivemq.extension")
-    id("com.github.hierynomus.license")
-    id("io.github.sgtsilvio.gradle.defaults")
-    id("org.asciidoctor.jvm.convert")
+    alias(libs.plugins.hivemq.extension)
+    alias(libs.plugins.defaults)
+    alias(libs.plugins.license)
+    alias(libs.plugins.asciidoctor)
 }
 
 group = "com.hivemq.extensions"
@@ -13,7 +13,7 @@ hivemqExtension {
     author.set("HiveMQ")
     priority.set(1000)
     startPriority.set(1000)
-    sdkVersion.set("${property("hivemq-extension-sdk.version")}")
+    sdkVersion.set(libs.versions.hivemq.extensionSdk)
 
     resources {
         from("LICENSE")
@@ -23,13 +23,13 @@ hivemqExtension {
 }
 
 dependencies {
-    implementation("io.prometheus:simpleclient:${property("prometheus-simpleclient.version")}")
-    implementation("io.prometheus:simpleclient_dropwizard:${property("prometheus-simpleclient.version")}")
-    implementation("io.prometheus:simpleclient_servlet:${property("prometheus-simpleclient.version")}")
-    implementation("org.eclipse.jetty:jetty-server:${property("jetty.version")}")
-    implementation("org.eclipse.jetty:jetty-servlet:${property("jetty.version")}")
-    implementation("org.eclipse.jetty:jetty-util:${property("jetty.version")}")
-    implementation("org.aeonbits.owner:owner:${property("owner.version")}")
+    implementation(libs.prometheus.simpleClient)
+    implementation(libs.prometheus.simpleClient.dropwizard)
+    implementation(libs.prometheus.simpleClient.servlet)
+    implementation(libs.jetty.server)
+    implementation(libs.jetty.servlet)
+    implementation(libs.jetty.util)
+    implementation(libs.owner)
 }
 
 tasks.asciidoctor {
@@ -41,8 +41,8 @@ tasks.asciidoctor {
 /* ******************** test ******************** */
 
 dependencies {
-    testImplementation("org.junit.jupiter:junit-jupiter:${property("junit-jupiter.version")}")
-    testImplementation("org.mockito:mockito-core:${property("mockito.version")}")
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.mockito)
 }
 
 tasks.withType<Test>().configureEach {
@@ -52,14 +52,14 @@ tasks.withType<Test>().configureEach {
 /* ******************** integration test ******************** */
 
 dependencies {
-    integrationTestCompileOnly("org.jetbrains:annotations:${property("jetbrains-annotations.version")}")
-    integrationTestImplementation(platform("org.testcontainers:testcontainers-bom:${property("testcontainers.version")}"))
-    integrationTestImplementation("org.testcontainers:junit-jupiter")
-    integrationTestImplementation("org.testcontainers:hivemq")
-    integrationTestImplementation("org.assertj:assertj-core:${property("assertj.version")}")
-    integrationTestImplementation("com.squareup.okhttp3:okhttp:${property("okhttp.version")}")
-    integrationTestImplementation("com.hivemq:hivemq-extension-sdk:${property("hivemq-extension-sdk.version")}")
-    integrationTestRuntimeOnly("ch.qos.logback:logback-classic:${property("logback.version")}")
+    integrationTestCompileOnly(libs.jetbrains.annotations)
+    integrationTestImplementation(platform(libs.testcontainers.bom))
+    integrationTestImplementation(libs.testcontainers.junitJupiter)
+    integrationTestImplementation(libs.testcontainers.hivemq)
+    integrationTestImplementation(libs.assertj)
+    integrationTestImplementation(libs.okhttp)
+    integrationTestImplementation(libs.hivemq.extensionSdk)
+    integrationTestRuntimeOnly(libs.logback.classic)
 }
 
 /* ******************** checks ******************** */
