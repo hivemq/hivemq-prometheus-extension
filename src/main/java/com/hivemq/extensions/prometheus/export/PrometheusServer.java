@@ -17,8 +17,8 @@
 package com.hivemq.extensions.prometheus.export;
 
 import com.codahale.metrics.MetricRegistry;
-import com.hivemq.extension.sdk.api.annotations.NotNull;
-import com.hivemq.extension.sdk.api.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import com.hivemq.extensions.prometheus.configuration.PrometheusExtensionConfiguration;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.dropwizard.DropwizardExports;

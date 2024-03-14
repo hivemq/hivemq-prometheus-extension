@@ -17,7 +17,6 @@
 package com.hivemq.extensions.prometheus;
 
 import com.hivemq.extension.sdk.api.ExtensionMain;
-import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.parameter.ExtensionStartInput;
 import com.hivemq.extension.sdk.api.parameter.ExtensionStartOutput;
 import com.hivemq.extension.sdk.api.parameter.ExtensionStopInput;
@@ -27,6 +26,7 @@ import com.hivemq.extensions.prometheus.configuration.ConfigurationReader;
 import com.hivemq.extensions.prometheus.configuration.InvalidConfigurationException;
 import com.hivemq.extensions.prometheus.configuration.PrometheusExtensionConfiguration;
 import com.hivemq.extensions.prometheus.export.PrometheusServer;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -16,7 +16,7 @@
 
 package com.hivemq.extensions.prometheus.configuration;
 
-import com.hivemq.extension.sdk.api.annotations.NotNull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * An exception which indicates a wrong configuration, e.g. not putting an mandatory field, wrong values, ...
