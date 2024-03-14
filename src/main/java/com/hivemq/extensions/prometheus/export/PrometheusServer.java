@@ -31,6 +31,9 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URI;
+import java.util.concurrent.atomic.AtomicReference;
+
 /**
  * Class that handles start and stop of a server, to enable requests the Metrics via the
  * {@link MonitoredMetricServlet}.
@@ -44,12 +47,13 @@ public class PrometheusServer {
     /* Maximum thread count for Jetty's thread pool */
     private static final int MAX_THREADS = 8;
 
-    private static final @NotNull Logger log = LoggerFactory.getLogger(PrometheusServer.class);
+    private static final @NotNull Logger LOG = LoggerFactory.getLogger(PrometheusServer.class);
+
+    private final @NotNull AtomicReference<DropwizardExports> dropwizardExportsRef = new AtomicReference<>();
 
     private final @NotNull PrometheusExtensionConfiguration configuration;
     private final @NotNull MetricRegistry metricRegistry;
     private final @NotNull Server server;
-    private @Nullable DropwizardExports dropwizardExports;
 
     public PrometheusServer(
             final @NotNull PrometheusExtensionConfiguration configuration,
@@ -60,45 +64,48 @@ public class PrometheusServer {
         final QueuedThreadPool queuedThreadPool = new QueuedThreadPool();
         queuedThreadPool.setMinThreads(MIN_THREADS);
         queuedThreadPool.setMaxThreads(MAX_THREADS);
-        server = new Server(queuedThreadPool);
+        this.server = new Server(queuedThreadPool);
         final ServerConnector connector = new ServerConnector(server);
         connector.setHost(configuration.hostIp());
         connector.setPort(configuration.port());
         server.setConnectors(new Connector[]{connector});
     }
 
-    public void start() {
-        dropwizardExports = new DropwizardExports(metricRegistry);
+    public void start() throws Exception {
+        final DropwizardExports dropwizardExports = new DropwizardExports(metricRegistry);
         CollectorRegistry.defaultRegistry.register(dropwizardExports);
+        dropwizardExportsRef.set(dropwizardExports);
 
         final ServletContextHandler context = new ServletContextHandler();
         context.setContextPath("/");
         server.setHandler(context);
         context.addServlet(new ServletHolder(new MonitoredMetricServlet(metricRegistry)), configuration.metricPath());
-        try {
-            server.start();
-        } catch (final Exception e) {
-            log.error("Error starting the Jetty Server for Prometheus Extension");
-            log.debug("Original exception was:", e);
-        }
-        log.info("Started Jetty Server exposing Prometheus Servlet on URI {}",
-                trimTrailingSlash(server.getURI().toString()) + configuration.metricPath());
+        server.start();
+        LOG.info("Started Jetty Server exposing Prometheus Servlet on URI {}",
+                trimTrailingSlash(server.getURI()) + configuration.metricPath());
     }
 
     public void stop() {
         try {
-            CollectorRegistry.defaultRegistry.unregister(dropwizardExports);
+            final DropwizardExports dropwizardExports = dropwizardExportsRef.getAndSet(null);
+            if (dropwizardExports != null) {
+                CollectorRegistry.defaultRegistry.unregister(dropwizardExports);
+            }
             server.stop();
         } catch (final Exception e) {
-            log.error("Exception occurred while stopping the Prometheus Extension");
-            log.debug("Original exception was: ", e);
+            LOG.error("Exception occurred while stopping the Prometheus Extension");
+            LOG.debug("Original exception was: ", e);
         }
     }
 
-    private @NotNull String trimTrailingSlash(final @NotNull String serverUri) {
-        if (serverUri.endsWith("/")) {
-            return serverUri.substring(0, serverUri.length() - 1);
+    private @NotNull String trimTrailingSlash(final @Nullable URI serverUri) {
+        if (serverUri == null) {
+            return "";
         }
-        return serverUri;
+        final String serverUriString = serverUri.toString();
+        if (serverUriString.endsWith("/")) {
+            return serverUriString.substring(0, serverUriString.length() - 1);
+        }
+        return serverUriString;
     }
 }

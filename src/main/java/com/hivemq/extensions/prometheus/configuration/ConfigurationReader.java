@@ -57,8 +57,7 @@ public class ConfigurationReader {
      * @throws FileNotFoundException         if the prometheusConfiguration.properties is not found in the conf folder
      *                                       of HiveMQ
      * @throws InvalidConfigurationException if the configuration cannot be initiated due to other critical errors
-     * @throws Exception                     if the configuration can not be initialized correctly due to unknown
-     *                                       exception
+     * @throws FileNotFoundException         if the configuration file cannot be found
      */
     public @NotNull PrometheusExtensionConfiguration readConfiguration()
             throws FileNotFoundException, InvalidConfigurationException {
@@ -95,7 +94,7 @@ public class ConfigurationReader {
         boolean error = false;
         final StringBuilder sb = new StringBuilder();
 
-        //test port
+        // test port
         try {
             testPortSense(config);
         } catch (final InvalidConfigurationException e) {
@@ -103,7 +102,7 @@ public class ConfigurationReader {
             sb.append(e.getMessage());
         }
 
-        //test MetricPath
+        // test MetricPath
         try {
             testMetricsPathSense(config);
         } catch (final InvalidConfigurationException e) {
@@ -111,7 +110,7 @@ public class ConfigurationReader {
             sb.append(e.getMessage());
         }
 
-        //testIP
+        // test IP
         try {
             testIpSense(config);
         } catch (final InvalidConfigurationException e) {
@@ -156,7 +155,7 @@ public class ConfigurationReader {
             throw new InvalidConfigurationException("Invalid host ip configuration.");
         }
         final String ip = config.hostIp();
-        if (ip.trim().length() == 0) {
+        if (ip.isBlank()) {
             throw new InvalidConfigurationException("The ip must not be blank.");
         }
     }
