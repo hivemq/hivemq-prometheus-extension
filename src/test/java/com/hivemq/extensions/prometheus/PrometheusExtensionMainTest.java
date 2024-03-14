@@ -39,14 +39,13 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
 class PrometheusExtensionMainTest {
 
     private final @NotNull PrometheusExtensionMain prometheusExtensionMain = new PrometheusExtensionMain();
-    private @NotNull ExtensionStartInput extensionStartInput;
-    private @NotNull ExtensionStartOutput extensionStartOutput;
+    private final @NotNull ExtensionStartInput extensionStartInput = mock(ExtensionStartInput.class);
+    private final @NotNull ExtensionStartOutput extensionStartOutput = mock(ExtensionStartOutput.class);
+
     private @NotNull Path configPath;
 
     @BeforeEach
     void setUp(@TempDir final @NotNull Path tempDir) {
-        extensionStartInput = mock(ExtensionStartInput.class);
-        extensionStartOutput = mock(ExtensionStartOutput.class);
         final ExtensionInformation extensionInformation = mock(ExtensionInformation.class);
         when(extensionStartInput.getExtensionInformation()).thenReturn(extensionInformation);
         when(extensionInformation.getExtensionHomeFolder()).thenReturn(tempDir.toFile());
@@ -54,7 +53,7 @@ class PrometheusExtensionMainTest {
     }
 
     @Test
-    void test_start_extension_fail_no_configfile() {
+    void test_start_extension_fail_no_configFile() {
         prometheusExtensionMain.extensionStart(extensionStartInput, extensionStartOutput);
         final ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
         verify(extensionStartOutput, times(1)).preventExtensionStartup(stringCaptor.capture());
@@ -62,7 +61,7 @@ class PrometheusExtensionMainTest {
     }
 
     @Test
-    void test_start_extension_fail_corrupt_configfile() throws Exception {
+    void test_start_extension_fail_corrupt_configFile() throws Exception {
         Files.createFile(configPath);
         prometheusExtensionMain.extensionStart(extensionStartInput, extensionStartOutput);
         verify(extensionStartOutput, times(1)).preventExtensionStartup(anyString());

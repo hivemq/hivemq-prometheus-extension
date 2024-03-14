@@ -33,12 +33,11 @@ import static org.mockito.Mockito.when;
 
 class PrometheusServerTest {
 
-    private @NotNull PrometheusExtensionConfiguration config;
+    private final @NotNull PrometheusExtensionConfiguration config = mock(PrometheusExtensionConfiguration.class);
 
     @BeforeEach
     void setUp() {
         final int port = createRandomPort();
-        config = mock(PrometheusExtensionConfiguration.class);
         when(config.hostIp()).thenReturn("localhost");
         when(config.port()).thenReturn(port);
         when(config.metricPath()).thenReturn("/metrics");
@@ -48,6 +47,7 @@ class PrometheusServerTest {
     void test_start_stop_successful() throws Exception {
         final PrometheusServer prometheusServer = new PrometheusServer(config, new MetricRegistry());
         prometheusServer.start();
+        //noinspection HttpUrlsUsage
         final URL url = new URL("http://" + config.hostIp() + ":" + config.port() + config.metricPath());
         final HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("GET");

@@ -18,6 +18,7 @@ package com.hivemq.extensions.prometheus.configuration;
 
 import com.hivemq.extension.sdk.api.annotations.NotNull;
 import org.aeonbits.owner.Config;
+import org.jetbrains.annotations.Nullable;
 
 import static org.aeonbits.owner.Config.DisableableFeature.PARAMETER_FORMATTING;
 import static org.aeonbits.owner.Config.DisableableFeature.VARIABLE_EXPANSION;
@@ -33,8 +34,8 @@ public interface PrometheusExtensionConfiguration extends Config {
     int port();
 
     @Key(IP_KEY)
-    String hostIp();
+    @Nullable String hostIp();
 
     @Key(METRIC_PATH_KEY)
-    String metricPath();
+    @Nullable String metricPath();
 }

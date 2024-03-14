@@ -101,17 +101,14 @@ class PrometheusExtensionIT {
         final Request request =
                 new Request.Builder().url("http://" + hivemq.getHost() + ":" + hivemq.getMappedPort(9399) + "/metrics")
                         .build();
-
-        final String responseString;
         try (final Response response = new OkHttpClient().newCall(request).execute()) {
-            responseString = Objects.requireNonNull(response.body()).string();
+            final String responseString = Objects.requireNonNull(response.body()).string();
+            return responseString.lines()
+                    .filter(s -> !s.startsWith("#"))
+                    .map(s -> s.split(" "))
+                    .map(splits -> Map.entry(splits[0], Float.parseFloat(splits[1])))
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, Float::max));
         }
-
-        return responseString.lines()
-                .filter(s -> !s.startsWith("#"))
-                .map(s -> s.split(" "))
-                .map(splits -> Map.entry(splits[0], Float.parseFloat(splits[1])))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, Float::max));
     }
 
     public static class MyMetricsExtension implements ExtensionMain {

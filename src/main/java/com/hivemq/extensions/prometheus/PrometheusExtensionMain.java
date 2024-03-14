@@ -18,7 +18,6 @@ package com.hivemq.extensions.prometheus;
 
 import com.hivemq.extension.sdk.api.ExtensionMain;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
-import com.hivemq.extension.sdk.api.annotations.Nullable;
 import com.hivemq.extension.sdk.api.parameter.ExtensionStartInput;
 import com.hivemq.extension.sdk.api.parameter.ExtensionStartOutput;
 import com.hivemq.extension.sdk.api.parameter.ExtensionStopInput;
@@ -28,8 +27,11 @@ import com.hivemq.extensions.prometheus.configuration.ConfigurationReader;
 import com.hivemq.extensions.prometheus.configuration.InvalidConfigurationException;
 import com.hivemq.extensions.prometheus.configuration.PrometheusExtensionConfiguration;
 import com.hivemq.extensions.prometheus.export.PrometheusServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileNotFoundException;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * This is the main class of the  prometheus extension, which is instantiated during the HiveMQ start up process.
@@ -38,13 +40,14 @@ import java.io.FileNotFoundException;
  */
 public class PrometheusExtensionMain implements ExtensionMain {
 
-    private @Nullable PrometheusServer prometheusServer;
+    private static final @NotNull Logger LOG = LoggerFactory.getLogger(PrometheusServer.class);
+
+    private final @NotNull AtomicReference<PrometheusServer> prometheusServerRef = new AtomicReference<>();
 
     @Override
     public void extensionStart(
             final @NotNull ExtensionStartInput extensionStartInput,
             final @NotNull ExtensionStartOutput extensionStartOutput) {
-
         final PrometheusExtensionConfiguration configuration;
         try {
             configuration = new ConfigurationReader(extensionStartInput.getExtensionInformation()).readConfiguration();
@@ -61,15 +64,22 @@ public class PrometheusExtensionMain implements ExtensionMain {
                     ((e.getMessage() != null) ? ": " + e.getMessage() : ""));
             return;
         }
-
-        prometheusServer = new PrometheusServer(configuration, Services.metricRegistry());
-        prometheusServer.start();
+        try {
+            final PrometheusServer prometheusServer = new PrometheusServer(configuration, Services.metricRegistry());
+            prometheusServer.start();
+            prometheusServerRef.set(prometheusServer);
+        } catch (final Exception e) {
+            LOG.error("Error starting the Jetty Server for Prometheus Extension", e);
+            extensionStartOutput.preventExtensionStartup("Error starting the Jetty Server for Prometheus Extension" +
+                    ((e.getMessage() != null) ? ": " + e.getMessage() : ""));
+        }
     }
 
     @Override
     public void extensionStop(
             final @NotNull ExtensionStopInput extensionStopInput,
             final @NotNull ExtensionStopOutput extensionStopOutput) {
+        final PrometheusServer prometheusServer = prometheusServerRef.getAndSet(null);
         if (prometheusServer != null) {
             prometheusServer.stop();
         }

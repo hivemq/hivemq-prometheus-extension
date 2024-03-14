@@ -38,25 +38,26 @@ import static com.codahale.metrics.MetricRegistry.name;
 class MonitoredMetricServlet extends MetricsServlet {
 
     private static final long serialVersionUID = 3841226821748298393L;
-    private static final @NotNull Logger log = LoggerFactory.getLogger(MonitoredMetricServlet.class);
-    private static final @NotNull String metricTopic = "get.time";
+    private static final @NotNull String METRIC_TOPIC = "get.time";
+
+    private static final @NotNull Logger LOG = LoggerFactory.getLogger(MonitoredMetricServlet.class);
 
     private final @NotNull Timer responses;
 
     MonitoredMetricServlet(final @NotNull MetricRegistry metricRegistry) {
         super(CollectorRegistry.defaultRegistry);
-        this.responses = metricRegistry.timer(name(MonitoredMetricServlet.class, metricTopic));
+        this.responses = metricRegistry.timer(name(MonitoredMetricServlet.class, METRIC_TOPIC));
     }
 
     @Override
     protected void doGet(final @NotNull HttpServletRequest req, final @NotNull HttpServletResponse resp) {
-        log.debug("Received HTTP-Get-Request from Prometheus to scrape metrics from HiveMQ: {}", req);
+        LOG.debug("Received HTTP-Get-Request from Prometheus to scrape metrics from HiveMQ: {}", req);
         try (final Timer.Context ignored = responses.time()) {
             super.doGet(req, resp);
         } catch (final Exception e) {
-            log.warn("Exception occurred while collecting metrics and creating of Prometheus response: {}.",
+            LOG.warn("Exception occurred while collecting metrics and creating of Prometheus response: {}.",
                     e.getClass().getSimpleName());
-            log.debug("Original exception was: ", e);
+            LOG.debug("Original exception was: ", e);
         }
     }
 }
