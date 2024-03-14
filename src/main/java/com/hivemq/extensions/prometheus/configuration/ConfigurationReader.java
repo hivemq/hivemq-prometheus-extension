@@ -16,7 +16,7 @@
 
 package com.hivemq.extensions.prometheus.configuration;
 
-import com.hivemq.extension.sdk.api.annotations.NotNull;
+import org.jetbrains.annotations.NotNull;
 import com.hivemq.extension.sdk.api.parameter.ExtensionInformation;
 import org.aeonbits.owner.ConfigFactory;
 

@@ -17,7 +17,7 @@
 package com.hivemq.extensions.prometheus.export;
 
 import com.codahale.metrics.MetricRegistry;
-import com.hivemq.extension.sdk.api.annotations.NotNull;
+import org.jetbrains.annotations.NotNull;
 import com.hivemq.extensions.prometheus.configuration.PrometheusExtensionConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

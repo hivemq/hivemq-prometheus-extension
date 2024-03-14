@@ -20,6 +20,7 @@ hivemqExtension {
 }
 
 dependencies {
+    compileOnly(libs.jetbrains.annotations)
     implementation(libs.prometheus.simpleClient)
     implementation(libs.prometheus.simpleClient.dropwizard)
     implementation(libs.prometheus.simpleClient.servlet)
@@ -37,6 +38,7 @@ testing {
         }
         "test"(JvmTestSuite::class) {
             dependencies {
+                compileOnly(libs.jetbrains.annotations)
                 implementation(libs.mockito)
             }
         }
