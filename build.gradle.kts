@@ -8,11 +8,11 @@ group = "com.hivemq.extensions"
 description = "HiveMQ extension to utilize Prometheus for monitoring"
 
 hivemqExtension {
-    name.set("Prometheus Monitoring Extension")
-    author.set("HiveMQ")
-    priority.set(1000)
-    startPriority.set(1000)
-    sdkVersion.set(libs.versions.hivemq.extensionSdk)
+    name = "Prometheus Monitoring Extension"
+    author = "HiveMQ"
+    priority = 1000
+    startPriority = 1000
+    sdkVersion = libs.versions.hivemq.extensionSdk
 
     resources {
         from("LICENSE")
