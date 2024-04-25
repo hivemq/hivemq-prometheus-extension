@@ -5,6 +5,7 @@ build/
 # IntelliJ
 out/
 *.iml
+*.patch
 .idea/*
 !.idea/codeStyles
 !.idea/inspectionProfiles
