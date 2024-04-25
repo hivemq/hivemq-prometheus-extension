@@ -16,11 +16,11 @@
 
 package com.hivemq.extensions.prometheus;
 
-import org.jetbrains.annotations.NotNull;
 import com.hivemq.extension.sdk.api.parameter.ExtensionInformation;
 import com.hivemq.extension.sdk.api.parameter.ExtensionStartInput;
 import com.hivemq.extension.sdk.api.parameter.ExtensionStartOutput;
 import com.hivemq.extensions.prometheus.configuration.ConfigurationReader;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;

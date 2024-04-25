@@ -18,9 +18,9 @@ package com.hivemq.extensions.prometheus.export;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import org.jetbrains.annotations.NotNull;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.exporter.MetricsServlet;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

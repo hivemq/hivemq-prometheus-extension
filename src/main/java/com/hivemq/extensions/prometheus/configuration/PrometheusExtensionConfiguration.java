@@ -16,8 +16,8 @@
 
 package com.hivemq.extensions.prometheus.configuration;
 
-import org.jetbrains.annotations.NotNull;
 import org.aeonbits.owner.Config;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import static org.aeonbits.owner.Config.DisableableFeature.PARAMETER_FORMATTING;
