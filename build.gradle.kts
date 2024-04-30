@@ -21,6 +21,7 @@ hivemqExtension {
 
 dependencies {
     compileOnly(libs.jetbrains.annotations)
+
     implementation(libs.prometheus.simpleClient)
     implementation(libs.prometheus.simpleClient.dropwizard)
     implementation(libs.prometheus.simpleClient.servlet)
