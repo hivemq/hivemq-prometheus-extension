@@ -16,7 +16,7 @@ jobs:
           distribution: temurin
           java-version: 11
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@31ae3562f68c96d481c31bc1a8a55cc1be162f83 # v3
+        uses: gradle/actions/setup-gradle@dbbdc275be76ac10734476cc723d82dfe7ec6eda # v3
       - name: Login to Docker Hub
         uses: docker/login-action@0d4c9c5ea7693da7b068278f7b52bda2a190a446 # v3
         with:
