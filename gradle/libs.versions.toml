@@ -1,5 +1,6 @@
 [versions]
 assertj = "3.26.3"
+gradleOci-junitJupiter = "0.6.0"
 hivemq-extensionSdk = "4.1.0"
 jetbrains-annotations = "24.1.0"
 jetty = "10.0.24" # version 11 breaks the Prometheus API
@@ -13,6 +14,7 @@ testcontainers = "1.20.2"
 
 [libraries]
 assertj = { module = "org.assertj:assertj-core", version.ref = "assertj" }
+gradleOci-junitJupiter = { module = "io.github.sgtsilvio:gradle-oci-junit-jupiter", version.ref = "gradleOci-junitJupiter" }
 hivemq-extensionSdk = { module = "com.hivemq:hivemq-extension-sdk", version.ref = "hivemq-extensionSdk" }
 jetbrains-annotations = { module = "org.jetbrains:annotations", version.ref = "jetbrains-annotations" }
 jetty-server = { module = "org.eclipse.jetty:jetty-server", version.ref = "jetty" }
@@ -31,4 +33,5 @@ testcontainers-junitJupiter = { module = "org.testcontainers:junit-jupiter", ver
 [plugins]
 hivemq-extension = { id = "com.hivemq.extension", version = "3.2.0" }
 defaults = { id = "io.github.sgtsilvio.gradle.defaults", version = "0.2.0" }
+oci = { id = "io.github.sgtsilvio.gradle.oci", version = "0.15.1" }
 license = { id = "com.github.hierynomus.license", version = "0.16.1" }

@@ -23,6 +23,7 @@ import com.hivemq.extension.sdk.api.parameter.ExtensionStartOutput;
 import com.hivemq.extension.sdk.api.parameter.ExtensionStopInput;
 import com.hivemq.extension.sdk.api.parameter.ExtensionStopOutput;
 import com.hivemq.extension.sdk.api.services.Services;
+import io.github.sgtsilvio.gradle.oci.junit.jupiter.OciImages;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -33,7 +34,6 @@ import org.testcontainers.hivemq.HiveMQContainer;
 import org.testcontainers.hivemq.HiveMQExtension;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.utility.MountableFile;
 
 import java.io.IOException;
@@ -51,10 +51,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Testcontainers
 class PrometheusExtensionIT {
 
-    final @NotNull DockerImageName DOCKER_IMAGE_NAME = DockerImageName.parse("hivemq/hivemq4").withTag("latest");
-
     @Container
-    final @NotNull HiveMQContainer hivemq = new HiveMQContainer(DOCKER_IMAGE_NAME) //
+    final @NotNull HiveMQContainer hivemq = new HiveMQContainer(OciImages.getImageName("hivemq/hivemq4")) //
             .withExtension(MountableFile.forClasspathResource("hivemq-prometheus-extension"))
             .waitForExtension("Prometheus Monitoring Extension")
             .withExposedPorts(9399)
