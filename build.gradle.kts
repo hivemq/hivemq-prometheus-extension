@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.hivemq.extension)
     alias(libs.plugins.defaults)
+    alias(libs.plugins.oci)
     alias(libs.plugins.license)
 }
 
@@ -21,7 +22,6 @@ hivemqExtension {
 
 dependencies {
     compileOnly(libs.jetbrains.annotations)
-
     implementation(libs.prometheus.simpleClient)
     implementation(libs.prometheus.simpleClient.dropwizard)
     implementation(libs.prometheus.simpleClient.servlet)
@@ -29,6 +29,14 @@ dependencies {
     implementation(libs.jetty.servlet)
     implementation(libs.jetty.util)
     implementation(libs.owner)
+}
+
+oci {
+    registries {
+        dockerHub {
+            optionalCredentials()
+        }
+    }
 }
 
 @Suppress("UnstableApiUsage")
@@ -49,9 +57,15 @@ testing {
                 implementation(libs.assertj)
                 implementation(libs.testcontainers.junitJupiter)
                 implementation(libs.testcontainers.hivemq)
+                implementation(libs.gradleOci.junitJupiter)
                 implementation(libs.hivemq.extensionSdk)
                 implementation(libs.okhttp)
                 runtimeOnly(libs.logback.classic)
+            }
+            oci.of(this) {
+                imageDependencies {
+                    runtime("hivemq:hivemq4:latest") { isChanging = true }
+                }
             }
         }
     }
