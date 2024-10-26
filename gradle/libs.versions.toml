@@ -5,12 +5,12 @@ hivemq-extensionSdk = "4.1.0"
 jetbrains-annotations = "24.1.0"
 jetty = "10.0.24" # version 11 breaks the Prometheus API
 junit-jupiter = "5.10.2"
-logback = "1.5.11"
+logback = "1.5.12"
 mockito = "5.13.0"
 okhttp = "4.12.0"
 owner = "1.0.12"
 prometheus-simpleClient = "0.16.0"
-testcontainers = "1.20.2"
+testcontainers = "1.20.3"
 
 [libraries]
 assertj = { module = "org.assertj:assertj-core", version.ref = "assertj" }
