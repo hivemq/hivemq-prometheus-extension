@@ -34,7 +34,6 @@ import org.testcontainers.hivemq.HiveMQContainer;
 import org.testcontainers.hivemq.HiveMQExtension;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.MountableFile;
 
 import java.io.IOException;
 import java.util.Map;
@@ -52,17 +51,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 class PrometheusExtensionIT {
 
     @Container
-    final @NotNull HiveMQContainer hivemq = new HiveMQContainer(OciImages.getImageName("hivemq/hivemq4")) //
-            .withExtension(MountableFile.forClasspathResource("hivemq-prometheus-extension"))
-            .waitForExtension("Prometheus Monitoring Extension")
-            .withExposedPorts(9399)
-            .withExtension(HiveMQExtension.builder()
-                    .mainClass(MyMetricsExtension.class)
-                    .name("metrics-extension")
-                    .id("metrics-extension")
-                    .version("1.0.0")
-                    .build())
-            .waitForExtension("metrics-extension");
+    final @NotNull HiveMQContainer hivemq =
+            new HiveMQContainer(OciImages.getImageName("hivemq/extensions/hivemq-prometheus-extension")
+                    .asCompatibleSubstituteFor("hivemq/hivemq4")) //
+                    .withExposedPorts(9399)
+                    .withExtension(HiveMQExtension.builder()
+                            .mainClass(MyMetricsExtension.class)
+                            .name("metrics-extension")
+                            .id("metrics-extension")
+                            .version("1.0.0")
+                            .build());
 
     @Test
     @Timeout(value = 5, unit = TimeUnit.MINUTES)
