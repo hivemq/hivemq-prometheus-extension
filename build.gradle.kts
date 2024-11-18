@@ -37,6 +37,37 @@ oci {
             optionalCredentials()
         }
     }
+    imageMapping {
+        mapModule("com.hivemq", "hivemq-enterprise") {
+            toImage("hivemq/hivemq4")
+        }
+    }
+    imageDefinitions.register("main") {
+        allPlatforms {
+            dependencies {
+                runtime("com.hivemq:hivemq-enterprise:latest") { isChanging = true }
+            }
+            config {
+                ports = setOf("9399")
+            }
+            layers {
+                layer("hivemqExtension") {
+                    contents {
+                        permissions("opt/hivemq/", 0b111_111_000)
+                        permissions("opt/hivemq/extensions/", 0b111_111_000)
+                        into("opt/hivemq/extensions") {
+                            filePermissions = 0b110_100_000 // TODO remove, use default
+                            directoryPermissions = 0b111_101_000 // TODO remove, use default
+                            permissions("*/", 0b111_111_000)
+                            permissions("*/hivemq-extension.xml", 0b110_110_000)
+                            permissions("*/prometheusConfiguration.properties", 0b110_110_000)
+                            from(zipTree(tasks.hivemqExtensionZip.flatMap { it.archiveFile }))
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 @Suppress("UnstableApiUsage")
@@ -64,7 +95,7 @@ testing {
             }
             oci.of(this) {
                 imageDependencies {
-                    runtime("hivemq:hivemq4:latest") { isChanging = true }
+                    runtime(project).tag("latest")
                 }
             }
         }
