@@ -53,14 +53,12 @@ oci {
             layers {
                 layer("hivemqExtension") {
                     contents {
-                        permissions("opt/hivemq/", 0b111_111_000)
-                        permissions("opt/hivemq/extensions/", 0b111_111_000)
+                        permissions("opt/hivemq/", 0b111_111_101)
+                        permissions("opt/hivemq/extensions/", 0b111_111_101)
                         into("opt/hivemq/extensions") {
-                            filePermissions = 0b110_100_000 // TODO remove, use default
-                            directoryPermissions = 0b111_101_000 // TODO remove, use default
-                            permissions("*/", 0b111_111_000)
-                            permissions("*/hivemq-extension.xml", 0b110_110_000)
-                            permissions("*/prometheusConfiguration.properties", 0b110_110_000)
+                            permissions("*/", 0b111_111_101)
+                            permissions("*/hivemq-extension.xml", 0b110_110_100)
+                            permissions("*/prometheusConfiguration.properties", 0b110_110_100)
                             from(zipTree(tasks.hivemqExtensionZip.flatMap { it.archiveFile }))
                         }
                     }
