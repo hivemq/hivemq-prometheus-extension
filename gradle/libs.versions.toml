@@ -1,5 +1,5 @@
 [versions]
-assertj = "3.26.3"
+assertj = "3.27.0"
 gradleOci-junitJupiter = "0.6.0"
 hivemq-extensionSdk = "4.1.0"
 jetbrains-annotations = "26.0.1"
