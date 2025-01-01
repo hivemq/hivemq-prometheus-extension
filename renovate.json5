@@ -3,4 +3,7 @@
   extends: [
     "local>hivemq/renovate-config:default.json5",
   ],
+    addLabels: [
+        "tooling-and-extensions-coordination",
+    ]
 }
