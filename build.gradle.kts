@@ -51,7 +51,7 @@ oci {
                 ports = setOf("9399")
             }
             layers {
-                layer("hivemqExtension") {
+                layer("main") {
                     contents {
                         permissions("opt/hivemq/", 0b111_111_101)
                         permissions("opt/hivemq/extensions/", 0b111_111_101)
