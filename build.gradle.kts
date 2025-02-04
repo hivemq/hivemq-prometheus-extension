@@ -50,17 +50,15 @@ oci {
             config {
                 ports = setOf("9399")
             }
-            layers {
-                layer("main") {
-                    contents {
-                        permissions("opt/hivemq/", 0b111_111_101)
-                        permissions("opt/hivemq/extensions/", 0b111_111_101)
-                        into("opt/hivemq/extensions") {
-                            permissions("*/", 0b111_111_101)
-                            permissions("*/hivemq-extension.xml", 0b110_110_100)
-                            permissions("*/prometheusConfiguration.properties", 0b110_110_100)
-                            from(zipTree(tasks.hivemqExtensionZip.flatMap { it.archiveFile }))
-                        }
+            layer("main") {
+                contents {
+                    permissions("opt/hivemq/", 0b111_111_101)
+                    permissions("opt/hivemq/extensions/", 0b111_111_101)
+                    into("opt/hivemq/extensions") {
+                        permissions("*/", 0b111_111_101)
+                        permissions("*/hivemq-extension.xml", 0b110_110_100)
+                        permissions("*/prometheusConfiguration.properties", 0b110_110_100)
+                        from(zipTree(tasks.hivemqExtensionZip.flatMap { it.archiveFile }))
                     }
                 }
             }
