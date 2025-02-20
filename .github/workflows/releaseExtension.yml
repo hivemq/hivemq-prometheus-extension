@@ -19,12 +19,7 @@ jobs:
         uses: gradle/actions/setup-gradle@94baf225fe0a508e581a564467443d0e2379123b # v4
       - name: Build Zip
         run: ./gradlew hivemqExtensionZip
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@e8f9f06c4b078e705bd2ea027f0926603fc9b4d5 # v1
+      - name: Upload GitHub Release Asset
+        run: gh release upload ${{ github.event.release.tag_name }} ./build/hivemq-extension/hivemq-prometheus-extension-${{ github.event.release.name }}.zip
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./build/hivemq-extension/hivemq-prometheus-extension-${{ github.event.release.name }}.zip
-          asset_name: hivemq-prometheus-extension-${{ github.event.release.name }}.zip
-          asset_content_type: application/zip
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
