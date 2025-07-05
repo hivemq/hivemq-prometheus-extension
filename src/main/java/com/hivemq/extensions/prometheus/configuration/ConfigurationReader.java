@@ -61,21 +61,16 @@ public class ConfigurationReader {
      */
     public @NotNull PrometheusExtensionConfiguration readConfiguration()
             throws FileNotFoundException, InvalidConfigurationException {
-        final File file = new File(extensionInformation.getExtensionHomeFolder(), CONFIG_PATH);
-
+        final var file = new File(extensionInformation.getExtensionHomeFolder(), CONFIG_PATH);
         if (!file.canRead()) {
             throw new FileNotFoundException(file.getAbsolutePath());
         }
-
-        try (final FileInputStream in = new FileInputStream(file)) {
-            final Properties properties = new Properties();
+        try (final var in = new FileInputStream(file)) {
+            final var properties = new Properties();
             properties.load(in);
-
             testAllPropertiesDeclared(properties);
-
-            final PrometheusExtensionConfiguration prometheusExtensionConfiguration =
+            final var prometheusExtensionConfiguration =
                     ConfigFactory.create(PrometheusExtensionConfiguration.class, properties);
-
             testConfiguration(prometheusExtensionConfiguration);
             return prometheusExtensionConfiguration;
         } catch (final IOException e) {
@@ -91,9 +86,8 @@ public class ConfigurationReader {
      */
     private void testConfiguration(final @NotNull PrometheusExtensionConfiguration config)
             throws InvalidConfigurationException {
-        boolean error = false;
-        final StringBuilder sb = new StringBuilder();
-
+        var error = false;
+        final var sb = new StringBuilder();
         // test port
         try {
             testPortSense(config);
@@ -101,7 +95,6 @@ public class ConfigurationReader {
             error = true;
             sb.append(e.getMessage());
         }
-
         // test MetricPath
         try {
             testMetricsPathSense(config);
@@ -109,7 +102,6 @@ public class ConfigurationReader {
             error = true;
             sb.append(e.getMessage());
         }
-
         // test IP
         try {
             testIpSense(config);
@@ -117,7 +109,6 @@ public class ConfigurationReader {
             error = true;
             sb.append(e.getMessage());
         }
-
         if (error) {
             throw new InvalidConfigurationException("Error while parsing and testing the configuration: " + sb);
         }
@@ -130,7 +121,7 @@ public class ConfigurationReader {
         } catch (final Exception e) {
             throw new InvalidConfigurationException("Invalid port configuration");
         }
-        final int port = config.port();
+        final var port = config.port();
         if (port < MIN_PORT) {
             throw new InvalidConfigurationException("The port must not be smaller than " +
                     MIN_PORT +
@@ -154,8 +145,8 @@ public class ConfigurationReader {
         } catch (final Exception e) {
             throw new InvalidConfigurationException("Invalid host ip configuration.");
         }
-        final String ip = config.hostIp();
-        if (ip.isBlank()) {
+        final var ip = config.hostIp();
+        if (ip == null || ip.isBlank()) {
             throw new InvalidConfigurationException("The ip must not be blank.");
         }
     }
@@ -167,16 +158,15 @@ public class ConfigurationReader {
         } catch (final Exception e) {
             throw new InvalidConfigurationException("Invalid metric_path configuration.");
         }
-        final String path = config.metricPath();
-        if (!path.startsWith("/")) {
+        final var path = config.metricPath();
+        if (path == null || !path.startsWith("/")) {
             throw new InvalidConfigurationException("The metric_path must begin with a slash, f.e. \"/metrics\".");
         }
     }
 
     private void testAllPropertiesDeclared(final @NotNull Properties properties) throws InvalidConfigurationException {
         boolean error = false;
-        final StringBuilder sb = new StringBuilder();
-
+        final var sb = new StringBuilder();
         if (!properties.containsKey(PrometheusExtensionConfiguration.METRIC_PATH_KEY)) {
             sb.append(" " + PrometheusExtensionConfiguration.METRIC_PATH_KEY);
             error = true;

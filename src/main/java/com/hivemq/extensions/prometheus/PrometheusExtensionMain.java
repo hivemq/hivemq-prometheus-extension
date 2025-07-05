@@ -40,7 +40,7 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class PrometheusExtensionMain implements ExtensionMain {
 
-    private static final @NotNull Logger LOG = LoggerFactory.getLogger(PrometheusServer.class);
+    private static final @NotNull Logger LOG = LoggerFactory.getLogger(PrometheusExtensionMain.class);
 
     private final @NotNull AtomicReference<PrometheusServer> prometheusServerRef = new AtomicReference<>();
 
@@ -79,7 +79,7 @@ public class PrometheusExtensionMain implements ExtensionMain {
     public void extensionStop(
             final @NotNull ExtensionStopInput extensionStopInput,
             final @NotNull ExtensionStopOutput extensionStopOutput) {
-        final PrometheusServer prometheusServer = prometheusServerRef.getAndSet(null);
+        final var prometheusServer = prometheusServerRef.getAndSet(null);
         if (prometheusServer != null) {
             prometheusServer.stop();
         }

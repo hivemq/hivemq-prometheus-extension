@@ -52,7 +52,7 @@ class MonitoredMetricServlet extends MetricsServlet {
     @Override
     protected void doGet(final @NotNull HttpServletRequest req, final @NotNull HttpServletResponse resp) {
         LOG.debug("Received HTTP-Get-Request from Prometheus to scrape metrics from HiveMQ: {}", req);
-        try (final Timer.Context ignored = responses.time()) {
+        try (final var ignored = responses.time()) {
             super.doGet(req, resp);
         } catch (final Exception e) {
             LOG.warn("Exception occurred while collecting metrics and creating of Prometheus response: {}.",

@@ -27,7 +27,7 @@ import java.net.HttpURLConnection;
 import java.net.ServerSocket;
 import java.net.URL;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -37,7 +37,7 @@ class PrometheusServerTest {
 
     @BeforeEach
     void setUp() {
-        final int port = createRandomPort();
+        final var port = createRandomPort();
         when(config.hostIp()).thenReturn("localhost");
         when(config.port()).thenReturn(port);
         when(config.metricPath()).thenReturn("/metrics");
@@ -45,20 +45,20 @@ class PrometheusServerTest {
 
     @Test
     void test_start_stop_successful() throws Exception {
-        final PrometheusServer prometheusServer = new PrometheusServer(config, new MetricRegistry());
+        final var prometheusServer = new PrometheusServer(config, new MetricRegistry());
         prometheusServer.start();
         //noinspection HttpUrlsUsage
-        final URL url = new URL("http://" + config.hostIp() + ":" + config.port() + config.metricPath());
-        final HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        final var url = new URL("http://" + config.hostIp() + ":" + config.port() + config.metricPath());
+        final var con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("GET");
-        assertEquals(200, con.getResponseCode());
+        assertThat(con.getResponseCode()).isEqualTo(200);
         prometheusServer.stop();
     }
 
     private int createRandomPort() {
         try {
-            final ServerSocket serverSocket = new ServerSocket(0);
-            final int port = serverSocket.getLocalPort();
+            final var serverSocket = new ServerSocket(0);
+            final var port = serverSocket.getLocalPort();
             serverSocket.close();
             return port;
         } catch (final IOException e) {

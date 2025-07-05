@@ -29,7 +29,7 @@ import org.mockito.ArgumentCaptor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -46,7 +46,7 @@ class PrometheusExtensionMainTest {
 
     @BeforeEach
     void setUp(@TempDir final @NotNull Path tempDir) {
-        final ExtensionInformation extensionInformation = mock(ExtensionInformation.class);
+        final var extensionInformation = mock(ExtensionInformation.class);
         when(extensionStartInput.getExtensionInformation()).thenReturn(extensionInformation);
         when(extensionInformation.getExtensionHomeFolder()).thenReturn(tempDir.toFile());
         configPath = tempDir.resolve(ConfigurationReader.CONFIG_PATH);
@@ -55,9 +55,9 @@ class PrometheusExtensionMainTest {
     @Test
     void test_start_extension_fail_no_configFile() {
         prometheusExtensionMain.extensionStart(extensionStartInput, extensionStartOutput);
-        final ArgumentCaptor<String> stringCaptor = ArgumentCaptor.forClass(String.class);
+        final var stringCaptor = ArgumentCaptor.forClass(String.class);
         verify(extensionStartOutput, times(1)).preventExtensionStartup(stringCaptor.capture());
-        assertTrue(stringCaptor.getValue().contains("could not be read"));
+        assertThat(stringCaptor.getValue()).contains("could not be read");
     }
 
     @Test

@@ -16,7 +16,6 @@
 
 package com.hivemq.extensions.prometheus;
 
-import com.codahale.metrics.MetricRegistry;
 import com.hivemq.extension.sdk.api.ExtensionMain;
 import com.hivemq.extension.sdk.api.parameter.ExtensionStartInput;
 import com.hivemq.extension.sdk.api.parameter.ExtensionStartOutput;
@@ -24,9 +23,6 @@ import com.hivemq.extension.sdk.api.parameter.ExtensionStopInput;
 import com.hivemq.extension.sdk.api.parameter.ExtensionStopOutput;
 import com.hivemq.extension.sdk.api.services.Services;
 import io.github.sgtsilvio.gradle.oci.junit.jupiter.OciImages;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
@@ -35,9 +31,11 @@ import org.testcontainers.hivemq.HiveMQExtension;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -85,26 +83,26 @@ class PrometheusExtensionIT {
                 1.0));
     }
 
-    private void assertMetrics(final @NotNull Map<String, Number> metrics) throws IOException {
-        final Map<String, Float> prometheusMetrics = metrics.entrySet()
+    private void assertMetrics(final @NotNull Map<String, Number> metrics) throws Exception {
+        final var prometheusMetrics = metrics.entrySet()
                 .stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().floatValue()));
         assertThat(getPrometheusMetrics()).containsAllEntriesOf(prometheusMetrics);
     }
 
-    private @NotNull Map<String, Float> getPrometheusMetrics() throws IOException {
+    private @NotNull Map<String, Float> getPrometheusMetrics() throws Exception {
+        final var client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NORMAL).build();
         //noinspection HttpUrlsUsage
-        final Request request =
-                new Request.Builder().url("http://" + hivemq.getHost() + ":" + hivemq.getMappedPort(9399) + "/metrics")
-                        .build();
-        try (final Response response = new OkHttpClient().newCall(request).execute()) {
-            final String responseString = Objects.requireNonNull(response.body()).string();
-            return responseString.lines()
-                    .filter(s -> !s.startsWith("#"))
-                    .map(s -> s.split(" "))
-                    .map(splits -> Map.entry(splits[0], Float.parseFloat(splits[1])))
-                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, Float::max));
-        }
+        final var request = HttpRequest.newBuilder()
+                .uri(URI.create("http://" + hivemq.getHost() + ":" + hivemq.getMappedPort(9399) + "/metrics"))
+                .build();
+        final var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        return response.body()
+                .lines()
+                .filter(s -> !s.startsWith("#"))
+                .map(s -> s.split(" "))
+                .map(splits -> Map.entry(splits[0], Float.parseFloat(splits[1])))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, Float::max));
     }
 
     public static class MyMetricsExtension implements ExtensionMain {
@@ -113,7 +111,7 @@ class PrometheusExtensionIT {
         public void extensionStart(
                 final @NotNull ExtensionStartInput extensionStartInput,
                 final @NotNull ExtensionStartOutput extensionStartOutput) {
-            final MetricRegistry metricRegistry = Services.metricRegistry();
+            final var metricRegistry = Services.metricRegistry();
             metricRegistry.counter("myCounter").inc();
             metricRegistry.gauge("myGauge", () -> () -> 1.0f);
             metricRegistry.meter("myMeter").mark();

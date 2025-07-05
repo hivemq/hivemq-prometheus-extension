@@ -81,6 +81,7 @@ testing {
         "test"(JvmTestSuite::class) {
             dependencies {
                 compileOnly(libs.jetbrains.annotations)
+                implementation(libs.assertj)
                 implementation(libs.mockito)
             }
         }
@@ -92,7 +93,6 @@ testing {
                 implementation(libs.testcontainers.hivemq)
                 implementation(libs.gradleOci.junitJupiter)
                 implementation(libs.hivemq.extensionSdk)
-                implementation(libs.okhttp)
                 runtimeOnly(libs.logback.classic)
             }
             oci.of(this) {

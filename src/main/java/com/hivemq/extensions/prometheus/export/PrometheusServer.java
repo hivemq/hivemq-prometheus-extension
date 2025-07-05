@@ -60,23 +60,23 @@ public class PrometheusServer {
             final @NotNull MetricRegistry metricRegistry) {
         this.configuration = configuration;
         this.metricRegistry = metricRegistry;
-        // Set sane thread pool limits (this being a metrics extension)
-        final QueuedThreadPool queuedThreadPool = new QueuedThreadPool();
+        // set sane thread pool limits (this being a metrics extension)
+        final var queuedThreadPool = new QueuedThreadPool();
         queuedThreadPool.setMinThreads(MIN_THREADS);
         queuedThreadPool.setMaxThreads(MAX_THREADS);
         this.server = new Server(queuedThreadPool);
-        final ServerConnector connector = new ServerConnector(server);
+        final var connector = new ServerConnector(server);
         connector.setHost(configuration.hostIp());
         connector.setPort(configuration.port());
         server.setConnectors(new Connector[]{connector});
     }
 
     public void start() throws Exception {
-        final DropwizardExports dropwizardExports = new DropwizardExports(metricRegistry);
+        final var dropwizardExports = new DropwizardExports(metricRegistry);
         CollectorRegistry.defaultRegistry.register(dropwizardExports);
         dropwizardExportsRef.set(dropwizardExports);
 
-        final ServletContextHandler context = new ServletContextHandler();
+        final var context = new ServletContextHandler();
         context.setContextPath("/");
         server.setHandler(context);
         context.addServlet(new ServletHolder(new MonitoredMetricServlet(metricRegistry)), configuration.metricPath());
@@ -87,14 +87,14 @@ public class PrometheusServer {
 
     public void stop() {
         try {
-            final DropwizardExports dropwizardExports = dropwizardExportsRef.getAndSet(null);
+            final var dropwizardExports = dropwizardExportsRef.getAndSet(null);
             if (dropwizardExports != null) {
                 CollectorRegistry.defaultRegistry.unregister(dropwizardExports);
             }
             server.stop();
         } catch (final Exception e) {
             LOG.error("Exception occurred while stopping the Prometheus Extension");
-            LOG.debug("Original exception was: ", e);
+            LOG.debug("Original exception was", e);
         }
     }
 
@@ -102,7 +102,7 @@ public class PrometheusServer {
         if (serverUri == null) {
             return "";
         }
-        final String serverUriString = serverUri.toString();
+        final var serverUriString = serverUri.toString();
         if (serverUriString.endsWith("/")) {
             return serverUriString.substring(0, serverUriString.length() - 1);
         }
