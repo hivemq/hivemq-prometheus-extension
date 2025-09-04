@@ -2,7 +2,7 @@
 assertj = "3.27.4"
 gradleOci-junitJupiter = "0.7.0"
 hivemq-extensionSdk = "4.1.0"
-jetbrains-annotations = "26.0.2"
+jetbrains-annotations = "26.0.2-1"
 jetty = "10.0.26" # version 11 breaks the Prometheus API
 junit-jupiter = "5.10.2"
 logback = "1.5.18"
