@@ -1,0 +1,231 @@
+name: Reproducible Build Test
+
+on:
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  build-ubuntu:
+    name: Build on Ubuntu (JDK 11.0.21)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+
+      - name: Setup Java
+        uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165 # v5
+        with:
+          distribution: temurin
+          java-version: 11.0.21
+
+      - name: Verify Java Version
+        run: java -version
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@4d9f0ba0025fe599b4ebab900eb7f3a1d93ef4c2 # v5
+
+      - name: Build Extension
+        run: ./gradlew clean hivemqExtensionZip
+
+      - name: Calculate Checksums
+        run: |
+          cd build/hivemq-extension
+          sha256sum *.zip > checksums-ubuntu.txt
+          sha256sum *.jar >> checksums-ubuntu.txt
+          cat checksums-ubuntu.txt
+
+      - name: Upload Ubuntu Artifacts
+        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # v4.4.0
+        with:
+          name: ubuntu-build
+          path: |
+            build/hivemq-extension/*.zip
+            build/hivemq-extension/*.jar
+            build/hivemq-extension/checksums-ubuntu.txt
+          retention-days: 1
+          if-no-files-found: error
+
+  build-macos:
+    name: Build on macOS (JDK 11.0.25)
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+
+      - name: Setup Java
+        uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165 # v5
+        with:
+          distribution: temurin
+          java-version: 11.0.25
+
+      - name: Verify Java Version
+        run: java -version
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@4d9f0ba0025fe599b4ebab900eb7f3a1d93ef4c2 # v5
+
+      - name: Build Extension
+        run: ./gradlew clean hivemqExtensionZip
+
+      - name: Calculate Checksums
+        run: |
+          cd build/hivemq-extension
+          shasum -a 256 *.zip > checksums-macos.txt
+          shasum -a 256 *.jar >> checksums-macos.txt
+          cat checksums-macos.txt
+
+      - name: Upload macOS Artifacts
+        uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # v4.4.0
+        with:
+          name: macos-build
+          path: |
+            build/hivemq-extension/*.zip
+            build/hivemq-extension/*.jar
+            build/hivemq-extension/checksums-macos.txt
+          retention-days: 1
+          if-no-files-found: error
+
+  verify-reproducibility:
+    name: Verify Cross-Platform & Cross-JDK Reproducibility
+    runs-on: ubuntu-latest
+    needs: [build-ubuntu, build-macos]
+    steps:
+      - name: Download Ubuntu Build
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        with:
+          name: ubuntu-build
+          path: ubuntu-build
+
+      - name: Download macOS Build
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        with:
+          name: macos-build
+          path: macos-build
+
+      - name: Extract Checksums
+        run: |
+          echo "=== Ubuntu (JDK 11.0.21) Checksums ==="
+          cat ubuntu-build/checksums-ubuntu.txt
+          echo ""
+          echo "=== macOS (JDK 11.0.25) Checksums ==="
+          cat macos-build/checksums-macos.txt
+          echo ""
+
+      - name: Compare Builds
+        run: |
+          # Extract just the checksums (first column) and sort them
+          UBUNTU_ZIP=$(grep '\.zip$' ubuntu-build/checksums-ubuntu.txt | awk '{print $1}')
+          MACOS_ZIP=$(grep '\.zip$' macos-build/checksums-macos.txt | awk '{print $1}')
+
+          UBUNTU_JAR=$(grep '\.jar$' ubuntu-build/checksums-ubuntu.txt | awk '{print $1}')
+          MACOS_JAR=$(grep '\.jar$' macos-build/checksums-macos.txt | awk '{print $1}')
+
+          echo "Comparing ZIP checksums..."
+          echo "Ubuntu: $UBUNTU_ZIP"
+          echo "macOS:  $MACOS_ZIP"
+
+          if [ "$UBUNTU_ZIP" = "$MACOS_ZIP" ]; then
+            echo "✅ ZIP builds are reproducible!"
+          else
+            echo "❌ ZIP builds differ between Ubuntu and macOS"
+            exit 1
+          fi
+
+          echo ""
+          echo "Comparing JAR checksums..."
+          echo "Ubuntu: $UBUNTU_JAR"
+          echo "macOS:  $MACOS_JAR"
+
+          if [ "$UBUNTU_JAR" = "$MACOS_JAR" ]; then
+            echo "✅ JAR builds are reproducible!"
+          else
+            echo "❌ JAR builds differ between Ubuntu and macOS"
+            exit 1
+          fi
+
+          echo ""
+          echo "🎉 All builds are reproducible across:"
+          echo "   - Different operating systems (Ubuntu vs macOS)"
+          echo "   - Different JDK patch versions (11.0.21 vs 11.0.25)"
+
+      - name: Verify Archive Permissions
+        run: |
+          echo "=== Verifying file permissions in Ubuntu ZIP ==="
+          zipinfo -l ubuntu-build/*.zip | head -20
+
+          echo ""
+          echo "=== Verifying file permissions in macOS ZIP ==="
+          zipinfo -l macos-build/*.zip | head -20
+
+          # Check that all files have 0644 and directories have 0755
+          echo ""
+          echo "Checking permission normalization..."
+
+          if zipinfo -l ubuntu-build/*.zip | grep -E '^-' | grep -v '^-rw-r--r--'; then
+            echo "❌ Found files without 0644 permissions in Ubuntu build"
+            exit 1
+          fi
+
+          if zipinfo -l ubuntu-build/*.zip | grep -E '^d' | grep -v '^drwxr-xr-x'; then
+            echo "❌ Found directories without 0755 permissions in Ubuntu build"
+            exit 1
+          fi
+
+          echo "✅ All permissions are correctly normalized!"
+
+  # Additional job to test reproducibility within the same environment
+  verify-same-environment:
+    name: Verify Same-Environment Reproducibility
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+
+      - name: Setup Java
+        uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165 # v5
+        with:
+          distribution: temurin
+          java-version: 11
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@4d9f0ba0025fe599b4ebab900eb7f3a1d93ef4c2 # v5
+
+      - name: First Build
+        run: ./gradlew clean hivemqExtensionZip
+
+      - name: Calculate First Build Checksums
+        run: |
+          mkdir -p /tmp/verify
+          cd build/hivemq-extension
+          sha256sum *.zip > /tmp/verify/checksums1.txt
+          sha256sum *.jar >> /tmp/verify/checksums1.txt
+          cat /tmp/verify/checksums1.txt
+
+      - name: Second Build
+        run: |
+          sleep 2
+          ./gradlew clean hivemqExtensionZip
+
+      - name: Calculate Second Build Checksums
+        run: |
+          cd build/hivemq-extension
+          sha256sum *.zip > /tmp/verify/checksums2.txt
+          sha256sum *.jar >> /tmp/verify/checksums2.txt
+          cat /tmp/verify/checksums2.txt
+
+      - name: Compare Same-Environment Builds
+        run: |
+          echo "=== First Build ==="
+          cat /tmp/verify/checksums1.txt
+          echo ""
+          echo "=== Second Build ==="
+          cat /tmp/verify/checksums2.txt
+          echo ""
+
+          if diff /tmp/verify/checksums1.txt /tmp/verify/checksums2.txt; then
+            echo "✅ Builds are reproducible within the same environment!"
+          else
+            echo "❌ Builds differ within the same environment"
+            exit 1
+          fi
