@@ -108,3 +108,26 @@ license {
     header = rootDir.resolve("HEADER")
     mapping("java", "SLASHSTAR_STYLE")
 }
+
+// configure reproducible builds
+tasks.withType<AbstractArchiveTask>().configureEach {
+    isPreserveFileTimestamps = false
+    isReproducibleFileOrder = true
+
+    // normalize file permissions for reproducibility
+    // files: 0644 (rw-r--r--), directories: 0755 (rwxr-xr-x)
+    filePermissions {
+        unix("0644")
+    }
+    dirPermissions {
+        unix("0755")
+    }
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    options.encoding = "UTF-8"
+    // ensure consistent compilation across different JDK versions
+    options.compilerArgs.addAll(listOf(
+        "-parameters" // include parameter names for reflection (improves consistency)
+    ))
+}
