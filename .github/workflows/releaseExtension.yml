@@ -19,7 +19,15 @@ jobs:
         uses: gradle/actions/setup-gradle@4d9f0ba0025fe599b4ebab900eb7f3a1d93ef4c2 # v5
       - name: Build Zip
         run: ./gradlew hivemqExtensionZip
+      - name: Generate SHA256 checksum
+        run: |
+          cd build/hivemq-extension
+          sha256sum hivemq-prometheus-extension-${{ github.event.release.name }}.zip > hivemq-prometheus-extension-${{ github.event.release.name }}.sha256
       - name: Upload GitHub Release Asset
         run: gh release upload ${{ github.event.release.tag_name }} ./build/hivemq-extension/hivemq-prometheus-extension-${{ github.event.release.name }}.zip
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload SHA256 Checksum
+        run: gh release upload ${{ github.event.release.tag_name }} ./build/hivemq-extension/hivemq-prometheus-extension-${{ github.event.release.name }}.sha256
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
