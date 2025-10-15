@@ -22,12 +22,12 @@ jobs:
       - name: Generate SHA256 checksum
         run: |
           cd build/hivemq-extension
-          sha256sum hivemq-prometheus-extension-${{ github.event.release.name }}.zip | cut -d' ' -f1 > hivemq-prometheus-extension-${{ github.event.release.name }}.sha256
+          sha256sum hivemq-prometheus-extension-${{ github.event.release.name }}.zip | cut -d' ' -f1 > hivemq-prometheus-extension-${{ github.event.release.name }}.zip.sha256
       - name: Upload GitHub Release Asset
         run: gh release upload ${{ github.event.release.tag_name }} ./build/hivemq-extension/hivemq-prometheus-extension-${{ github.event.release.name }}.zip
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload SHA256 Checksum
-        run: gh release upload ${{ github.event.release.tag_name }} ./build/hivemq-extension/hivemq-prometheus-extension-${{ github.event.release.name }}.sha256
+        run: gh release upload ${{ github.event.release.tag_name }} ./build/hivemq-extension/hivemq-prometheus-extension-${{ github.event.release.name }}.zip.sha256
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
