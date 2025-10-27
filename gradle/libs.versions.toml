@@ -1,6 +1,6 @@
 [versions]
 assertj = "3.27.6"
-gradleOci-junitJupiter = "0.7.0"
+gradleOci-junitJupiter = "0.8.0"
 hivemq-extensionSdk = "4.1.0"
 jetbrains-annotations = "26.0.2-1"
 jetty = "10.0.26" # version 11 breaks the Prometheus API
