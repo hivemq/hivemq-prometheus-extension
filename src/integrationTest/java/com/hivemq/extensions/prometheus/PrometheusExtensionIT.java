@@ -58,7 +58,8 @@ class PrometheusExtensionIT {
                             .name("metrics-extension")
                             .id("metrics-extension")
                             .version("1.0.0")
-                            .build());
+                            .build())
+                    .withEnv("HIVEMQ_DISABLE_STATISTICS", "true");
 
     @Test
     @Timeout(value = 5, unit = TimeUnit.MINUTES)

@@ -9,7 +9,7 @@ logback = "1.5.21"
 mockito = "5.20.0"
 owner = "1.0.12"
 prometheus-simpleClient = "0.16.0"
-testcontainers = "1.21.3"
+testcontainers = "2.0.2"
 
 [libraries]
 assertj = { module = "org.assertj:assertj-core", version.ref = "assertj" }
@@ -25,8 +25,9 @@ owner = { module = "org.aeonbits.owner:owner", version.ref = "owner" }
 prometheus-simpleClient = { module = "io.prometheus:simpleclient", version.ref = "prometheus-simpleClient" }
 prometheus-simpleClient-dropwizard = { module = "io.prometheus:simpleclient_dropwizard", version.ref = "prometheus-simpleClient" }
 prometheus-simpleClient-servlet = { module = "io.prometheus:simpleclient_servlet", version.ref = "prometheus-simpleClient" }
-testcontainers-hivemq = { module = "org.testcontainers:hivemq", version.ref = "testcontainers" }
-testcontainers-junitJupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
+testcontainers = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
+testcontainers-hivemq = { module = "org.testcontainers:testcontainers-hivemq", version.ref = "testcontainers" }
+testcontainers-junitJupiter = { module = "org.testcontainers:testcontainers-junit-jupiter", version.ref = "testcontainers" }
 
 [plugins]
 defaults = { id = "io.github.sgtsilvio.gradle.defaults", version = "0.2.0" }

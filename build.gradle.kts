@@ -89,8 +89,9 @@ testing {
             dependencies {
                 compileOnly(libs.jetbrains.annotations)
                 implementation(libs.assertj)
-                implementation(libs.testcontainers.junitJupiter)
+                implementation(libs.testcontainers)
                 implementation(libs.testcontainers.hivemq)
+                implementation(libs.testcontainers.junitJupiter)
                 implementation(libs.gradleOci.junitJupiter)
                 implementation(libs.hivemq.extensionSdk)
                 runtimeOnly(libs.logback.classic)
