@@ -30,10 +30,7 @@ dependencies {
     compileOnly(libs.jetbrains.annotations)
     implementation(libs.prometheus.simpleClient)
     implementation(libs.prometheus.simpleClient.dropwizard)
-    implementation(libs.prometheus.simpleClient.servlet)
-    implementation(libs.jetty.server)
-    implementation(libs.jetty.servlet)
-    implementation(libs.jetty.util)
+    implementation(libs.prometheus.simpleClient.httpserver)
     implementation(libs.owner)
 }
 

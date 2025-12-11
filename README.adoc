@@ -32,11 +32,11 @@ The extension can be configured with the `prometheusConfiguration.properties` fi
 
 |port
 |9399
-|The port which the servlet will listen to.
+|The port which the HTTP server will listen to.
 
 |ip
 |0.0.0.0
-|The bind-address which the servlet will listen to.
+|The bind-address which the HTTP server will listen to.
 
 |metric_path
 |/metrics

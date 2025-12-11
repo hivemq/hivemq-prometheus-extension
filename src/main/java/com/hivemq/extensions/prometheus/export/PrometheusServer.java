@@ -18,94 +18,60 @@ package com.hivemq.extensions.prometheus.export;
 
 import com.codahale.metrics.MetricRegistry;
 import com.hivemq.extensions.prometheus.configuration.PrometheusExtensionConfiguration;
-import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.dropwizard.DropwizardExports;
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URI;
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Class that handles start and stop of a server, to enable requests the Metrics via the
- * {@link MonitoredMetricServlet}.
+ * Class that handles start and stop of a server, to enable requests the Metrics via HTTP.
  *
- * @author Daniel Krüger
+ * @author David Sondermann
  */
 public class PrometheusServer {
 
-    /* Minimum thread count for Jetty's thread pool */
-    private static final int MIN_THREADS = 3;
-    /* Maximum thread count for Jetty's thread pool */
-    private static final int MAX_THREADS = 8;
-
     private static final @NotNull Logger LOG = LoggerFactory.getLogger(PrometheusServer.class);
 
-    private final @NotNull AtomicReference<DropwizardExports> dropwizardExportsRef = new AtomicReference<>();
+    private final @NotNull AtomicReference<PrometheusHttpServer> httpServerRef = new AtomicReference<>();
 
     private final @NotNull PrometheusExtensionConfiguration configuration;
     private final @NotNull MetricRegistry metricRegistry;
-    private final @NotNull Server server;
 
     public PrometheusServer(
             final @NotNull PrometheusExtensionConfiguration configuration,
             final @NotNull MetricRegistry metricRegistry) {
         this.configuration = configuration;
         this.metricRegistry = metricRegistry;
-        // set sane thread pool limits (this being a metrics extension)
-        final var queuedThreadPool = new QueuedThreadPool();
-        queuedThreadPool.setMinThreads(MIN_THREADS);
-        queuedThreadPool.setMaxThreads(MAX_THREADS);
-        this.server = new Server(queuedThreadPool);
-        final var connector = new ServerConnector(server);
-        connector.setHost(configuration.hostIp());
-        connector.setPort(configuration.port());
-        server.setConnectors(new Connector[]{connector});
     }
 
-    public void start() throws Exception {
-        final var dropwizardExports = new DropwizardExports(metricRegistry);
-        CollectorRegistry.defaultRegistry.register(dropwizardExports);
-        dropwizardExportsRef.set(dropwizardExports);
+    public void start() throws IOException {
+        final var server = PrometheusHttpServer.builder()
+                .port(configuration.port())
+                .hostname(configuration.hostIp())
+                .metricsHandlerPath(configuration.metricPath())
+                .collector(new DropwizardExports(metricRegistry))
+                .buildAndStart();
+        httpServerRef.set(server);
 
-        final var context = new ServletContextHandler();
-        context.setContextPath("/");
-        server.setHandler(context);
-        context.addServlet(new ServletHolder(new MonitoredMetricServlet(metricRegistry)), configuration.metricPath());
-        server.start();
-        LOG.info("Started Jetty Server exposing Prometheus Servlet on URI {}",
-                trimTrailingSlash(server.getURI()) + configuration.metricPath());
+        //noinspection HttpUrlsUsage
+        LOG.info("Started HTTPServer exposing Prometheus metrics on http://{}:{}{}",
+                configuration.hostIp(),
+                configuration.port(),
+                configuration.metricPath());
     }
 
     public void stop() {
         try {
-            final var dropwizardExports = dropwizardExportsRef.getAndSet(null);
-            if (dropwizardExports != null) {
-                CollectorRegistry.defaultRegistry.unregister(dropwizardExports);
+            final var server = httpServerRef.getAndSet(null);
+            if (server != null) {
+                server.stop();
             }
-            server.stop();
         } catch (final Exception e) {
             LOG.error("Exception occurred while stopping the Prometheus Extension");
             LOG.debug("Original exception was", e);
         }
-    }
-
-    private @NotNull String trimTrailingSlash(final @Nullable URI serverUri) {
-        if (serverUri == null) {
-            return "";
-        }
-        final var serverUriString = serverUri.toString();
-        if (serverUriString.endsWith("/")) {
-            return serverUriString.substring(0, serverUriString.length() - 1);
-        }
-        return serverUriString;
     }
 }

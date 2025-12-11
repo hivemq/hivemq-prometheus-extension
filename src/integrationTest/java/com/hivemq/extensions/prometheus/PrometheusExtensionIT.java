@@ -42,8 +42,7 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * @author Yannick Weber
- * @since 4.0.6
+ * @author David Sondermann
  */
 @Testcontainers
 class PrometheusExtensionIT {
@@ -91,9 +90,9 @@ class PrometheusExtensionIT {
         assertThat(getPrometheusMetrics()).containsAllEntriesOf(prometheusMetrics);
     }
 
+    @SuppressWarnings("HttpUrlsUsage")
     private @NotNull Map<String, Float> getPrometheusMetrics() throws Exception {
         final var client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NORMAL).build();
-        //noinspection HttpUrlsUsage
         final var request = HttpRequest.newBuilder()
                 .uri(URI.create("http://" + hivemq.getHost() + ":" + hivemq.getMappedPort(9399) + "/metrics"))
                 .build();

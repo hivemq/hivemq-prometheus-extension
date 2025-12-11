@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * An exception which indicates a wrong configuration, e.g. not putting an mandatory field, wrong values, ...
  *
- * @author Daniel Krüger
+ * @author David Sondermann
  */
 public class InvalidConfigurationException extends Exception {
 
