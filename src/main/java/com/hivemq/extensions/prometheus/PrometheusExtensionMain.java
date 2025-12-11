@@ -24,7 +24,6 @@ import com.hivemq.extension.sdk.api.parameter.ExtensionStopOutput;
 import com.hivemq.extension.sdk.api.services.Services;
 import com.hivemq.extensions.prometheus.configuration.ConfigurationReader;
 import com.hivemq.extensions.prometheus.configuration.InvalidConfigurationException;
-import com.hivemq.extensions.prometheus.configuration.PrometheusExtensionConfiguration;
 import com.hivemq.extensions.prometheus.export.PrometheusServer;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -36,7 +35,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * This is the main class of the  prometheus extension, which is instantiated during the HiveMQ start up process.
  *
- * @author Daniel Krüger
+ * @author David Sondermann
  */
 public class PrometheusExtensionMain implements ExtensionMain {
 
@@ -48,30 +47,28 @@ public class PrometheusExtensionMain implements ExtensionMain {
     public void extensionStart(
             final @NotNull ExtensionStartInput extensionStartInput,
             final @NotNull ExtensionStartOutput extensionStartOutput) {
-        final PrometheusExtensionConfiguration configuration;
         try {
-            configuration = new ConfigurationReader(extensionStartInput.getExtensionInformation()).readConfiguration();
+            final var configuration =
+                    new ConfigurationReader(extensionStartInput.getExtensionInformation()).readConfiguration();
+            try {
+                final var prometheusServer = new PrometheusServer(configuration, Services.metricRegistry());
+                prometheusServerRef.set(prometheusServer);
+                prometheusServer.start();
+            } catch (final Exception e) {
+                LOG.error("Error starting the HTTP Server for Prometheus Extension", e);
+                extensionStartOutput.preventExtensionStartup(String.format(
+                        "Error starting the HTTP Server for Prometheus Extension%s",
+                        (e.getMessage() != null) ? ": " + e.getMessage() : ""));
+            }
         } catch (final FileNotFoundException e) {
-            extensionStartOutput.preventExtensionStartup("The configuration file: " +
-                    e.getMessage() +
-                    " could not be read");
-            return;
+            extensionStartOutput.preventExtensionStartup(String.format("The configuration file: %s could not be read",
+                    e.getMessage()));
         } catch (final InvalidConfigurationException e) {
             extensionStartOutput.preventExtensionStartup(e.getMessage());
-            return;
         } catch (final Exception e) {
-            extensionStartOutput.preventExtensionStartup("Unknown error while reading configuration file" +
-                    ((e.getMessage() != null) ? ": " + e.getMessage() : ""));
-            return;
-        }
-        try {
-            final PrometheusServer prometheusServer = new PrometheusServer(configuration, Services.metricRegistry());
-            prometheusServer.start();
-            prometheusServerRef.set(prometheusServer);
-        } catch (final Exception e) {
-            LOG.error("Error starting the Jetty Server for Prometheus Extension", e);
-            extensionStartOutput.preventExtensionStartup("Error starting the Jetty Server for Prometheus Extension" +
-                    ((e.getMessage() != null) ? ": " + e.getMessage() : ""));
+            extensionStartOutput.preventExtensionStartup(String.format(
+                    "Unknown error while reading configuration file%s",
+                    (e.getMessage() != null) ? ": " + e.getMessage() : ""));
         }
     }
 

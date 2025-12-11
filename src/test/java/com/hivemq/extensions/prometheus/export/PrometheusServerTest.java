@@ -23,9 +23,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.ServerSocket;
-import java.net.URL;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -34,6 +36,7 @@ import static org.mockito.Mockito.when;
 class PrometheusServerTest {
 
     private final @NotNull PrometheusExtensionConfiguration config = mock(PrometheusExtensionConfiguration.class);
+    private final @NotNull MetricRegistry metricRegistry = new MetricRegistry();
 
     @BeforeEach
     void setUp() {
@@ -45,13 +48,27 @@ class PrometheusServerTest {
 
     @Test
     void test_start_stop_successful() throws Exception {
-        final var prometheusServer = new PrometheusServer(config, new MetricRegistry());
+        metricRegistry.counter("my-counter-1").inc();
+
+        final var prometheusServer = new PrometheusServer(config, metricRegistry);
         prometheusServer.start();
+
+        metricRegistry.counter("my-counter-1").inc();
+        metricRegistry.counter("my-counter-2").inc();
+
+        final var httpClient = HttpClient.newHttpClient();
         //noinspection HttpUrlsUsage
-        final var url = new URL("http://" + config.hostIp() + ":" + config.port() + config.metricPath());
-        final var con = (HttpURLConnection) url.openConnection();
-        con.setRequestMethod("GET");
-        assertThat(con.getResponseCode()).isEqualTo(200);
+        final var httpRequest = HttpRequest.newBuilder(URI.create("http://" +
+                config.hostIp() +
+                ":" +
+                config.port() +
+                config.metricPath())).build();
+        final var response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.body()) //
+                .contains("my_counter_1 2.0") //
+                .contains("my_counter_2 1.0");
+
         prometheusServer.stop();
     }
 

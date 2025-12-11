@@ -29,7 +29,7 @@ import java.util.Properties;
 /**
  * Provides the possibility to obtain the configuration of the prometheus-extension via readConfiguration()
  *
- * @author Daniel Krüger
+ * @author David Sondermann
  */
 public class ConfigurationReader {
 
@@ -79,10 +79,10 @@ public class ConfigurationReader {
     }
 
     /**
-     * In the ConfigFactory.create() it is not tested whether the entries make sense (here e.g. port holds a int)
+     * In the ConfigFactory.create() it is not tested whether the entries make sense (here e.g. port holds an int)
      *
      * @param config config to be tested
-     * @throws InvalidConfigurationException thrown when a entry makes no sense or does not meet the requirements
+     * @throws InvalidConfigurationException thrown when an entry makes no sense or does not meet the requirements
      */
     private void testConfiguration(final @NotNull PrometheusExtensionConfiguration config)
             throws InvalidConfigurationException {
@@ -123,18 +123,14 @@ public class ConfigurationReader {
         }
         final var port = config.port();
         if (port < MIN_PORT) {
-            throw new InvalidConfigurationException("The port must not be smaller than " +
-                    MIN_PORT +
-                    ". Value was " +
-                    port +
-                    ".");
+            throw new InvalidConfigurationException(String.format("The port must not be smaller than %d, but was %d",
+                    MIN_PORT,
+                    port));
         }
         if (port > MAX_PORT) {
-            throw new InvalidConfigurationException("The port must not be greater than " +
-                    MAX_PORT +
-                    ". Value was " +
-                    port +
-                    ".");
+            throw new InvalidConfigurationException(String.format("The port must not be greater than %d, but was %d",
+                    MAX_PORT,
+                    port));
         }
     }
 
@@ -143,11 +139,11 @@ public class ConfigurationReader {
         try {
             config.hostIp();
         } catch (final Exception e) {
-            throw new InvalidConfigurationException("Invalid host ip configuration.");
+            throw new InvalidConfigurationException("Invalid host ip configuration");
         }
         final var ip = config.hostIp();
         if (ip == null || ip.isBlank()) {
-            throw new InvalidConfigurationException("The ip must not be blank.");
+            throw new InvalidConfigurationException("The ip must not be blank");
         }
     }
 
@@ -156,11 +152,11 @@ public class ConfigurationReader {
         try {
             config.metricPath();
         } catch (final Exception e) {
-            throw new InvalidConfigurationException("Invalid metric_path configuration.");
+            throw new InvalidConfigurationException("Invalid metric_path configuration");
         }
         final var path = config.metricPath();
         if (path == null || !path.startsWith("/")) {
-            throw new InvalidConfigurationException("The metric_path must begin with a slash, f.e. \"/metrics\".");
+            throw new InvalidConfigurationException("The metric_path must begin with a slash, e.g. \"/metrics\"");
         }
     }
 
@@ -180,7 +176,7 @@ public class ConfigurationReader {
             error = true;
         }
         if (error) {
-            throw new InvalidConfigurationException("Missing required configuration of:" + sb + ".");
+            throw new InvalidConfigurationException(String.format("Missing required configuration of:%s", sb));
         }
     }
 }
