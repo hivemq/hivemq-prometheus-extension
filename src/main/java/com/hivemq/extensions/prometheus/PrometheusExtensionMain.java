@@ -33,7 +33,7 @@ import java.io.FileNotFoundException;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * This is the main class of the  prometheus extension, which is instantiated during the HiveMQ start up process.
+ * This is the main class of the prometheus extension, which is instantiated during the HiveMQ start up process.
  *
  * @author David Sondermann
  */

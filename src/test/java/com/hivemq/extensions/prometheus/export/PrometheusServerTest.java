@@ -47,7 +47,7 @@ class PrometheusServerTest {
     }
 
     @Test
-    void test_start_stop_successful() throws Exception {
+    void startStop() throws Exception {
         metricRegistry.counter("my-counter-1").inc();
 
         final var prometheusServer = new PrometheusServer(config, metricRegistry);
@@ -56,19 +56,16 @@ class PrometheusServerTest {
         metricRegistry.counter("my-counter-1").inc();
         metricRegistry.counter("my-counter-2").inc();
 
-        final var httpClient = HttpClient.newHttpClient();
-        //noinspection HttpUrlsUsage
-        final var httpRequest = HttpRequest.newBuilder(URI.create("http://" +
-                config.hostIp() +
-                ":" +
-                config.port() +
-                config.metricPath())).build();
-        final var response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-        assertThat(response.statusCode()).isEqualTo(200);
-        assertThat(response.body()) //
-                .contains("my_counter_1 2.0") //
-                .contains("my_counter_2 1.0");
-
+        try (final var httpClient = HttpClient.newHttpClient()) {
+            //noinspection HttpUrlsUsage
+            final var url = "http://%s:%d%s".formatted(config.hostIp(), config.port(), config.metricPath());
+            final var httpRequest = HttpRequest.newBuilder(URI.create(url)).build();
+            final var response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+            assertThat(response.statusCode()).isEqualTo(200);
+            assertThat(response.body()) //
+                    .contains("my_counter_1 2.0") //
+                    .contains("my_counter_2 1.0");
+        }
         prometheusServer.stop();
     }
 
