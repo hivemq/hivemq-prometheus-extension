@@ -8,7 +8,7 @@ logback = "1.5.22"
 mockito = "5.21.0"
 owner = "1.0.12"
 prometheus-simpleClient = "0.16.0"
-testcontainers = "2.0.2"
+testcontainers = "2.0.3"
 
 [libraries]
 assertj = { module = "org.assertj:assertj-core", version.ref = "assertj" }
