@@ -92,17 +92,17 @@ class PrometheusExtensionIT {
 
     @SuppressWarnings("HttpUrlsUsage")
     private @NotNull Map<String, Float> getPrometheusMetrics() throws Exception {
-        final var client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NORMAL).build();
-        final var request = HttpRequest.newBuilder()
-                .uri(URI.create("http://" + hivemq.getHost() + ":" + hivemq.getMappedPort(9399) + "/metrics"))
-                .build();
-        final var response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        return response.body()
-                .lines()
-                .filter(s -> !s.startsWith("#"))
-                .map(s -> s.split(" "))
-                .map(splits -> Map.entry(splits[0], Float.parseFloat(splits[1])))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, Float::max));
+        try (final var client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NORMAL).build()) {
+            final var url = "http://%s:%d/metrics".formatted(hivemq.getHost(), hivemq.getMappedPort(9399));
+            final var request = HttpRequest.newBuilder().uri(URI.create(url)).build();
+            final var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            return response.body()
+                    .lines()
+                    .filter(s -> !s.startsWith("#"))
+                    .map(s -> s.split(" "))
+                    .map(splits -> Map.entry(splits[0], Float.parseFloat(splits[1])))
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, Float::max));
+        }
     }
 
     public static class MyMetricsExtension implements ExtensionMain {

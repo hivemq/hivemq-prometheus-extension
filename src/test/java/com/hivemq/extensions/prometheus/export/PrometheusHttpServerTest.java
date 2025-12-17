@@ -35,11 +35,6 @@ class PrometheusHttpServerTest {
 
     @Test
     void defaultHandler() throws Exception {
-        run(PrometheusHttpServer.builder().collector(collector).buildAndStart(), "/");
-    }
-
-    @Test
-    void metrics() throws Exception {
         run(PrometheusHttpServer.builder().collector(collector).buildAndStart(), "/metrics");
     }
 
@@ -65,11 +60,24 @@ class PrometheusHttpServerTest {
                 .buildAndStart()).isInstanceOf(IllegalArgumentException.class).hasMessage("port out of range:-1");
     }
 
+    @Test
+    void metricsCustomPath_withRootPath() throws Exception {
+        run(PrometheusHttpServer.builder()
+                .port(0)
+                .metricsHandlerPath("/")
+                .collector(collector)
+                .buildAndStart(), "/");
+    }
+
     private void run(final @NotNull PrometheusHttpServer server, final @NotNull String path) throws Exception {
         try (final var socket = new Socket()) {
             socket.connect(new InetSocketAddress("localhost", server.getPort()));
-            socket.getOutputStream().write(("GET " + path + " HTTP/1.1 \r\n").getBytes(StandardCharsets.UTF_8));
-            socket.getOutputStream().write("HOST: localhost \r\n\r\n".getBytes(StandardCharsets.UTF_8));
+            final var httpRequest = """
+                    GET %s HTTP/1.1\r
+                    HOST: localhost\r
+                    \r
+                    """.formatted(path);
+            socket.getOutputStream().write(httpRequest.getBytes(StandardCharsets.UTF_8));
             socket.getOutputStream().flush();
             var actualResponse = "";
             final var resp = new byte[500];

@@ -37,8 +37,11 @@ class ConfigurationReaderTest {
     private @NotNull ConfigurationReader configurationReader;
     private @NotNull Path configPath;
 
+    @TempDir
+    private @NotNull Path tempDir;
+
     @BeforeEach
-    void setUp(@TempDir final @NotNull Path tempDir) {
+    void setUp() {
         final var extensionInformation = mock(ExtensionInformation.class);
         when(extensionInformation.getExtensionHomeFolder()).thenReturn(tempDir.toFile());
         configurationReader = new ConfigurationReader(extensionInformation);
@@ -46,54 +49,89 @@ class ConfigurationReaderTest {
     }
 
     @Test
-    void test_ReadConfiguration_no_file() {
-        assertThatThrownBy(configurationReader::readConfiguration).isInstanceOf(FileNotFoundException.class);
-    }
-
-    @Test
-    void test_successfully_read_config() throws Exception {
-        Files.writeString(configPath, "metric_path=/metrics\nip=127.0.0.1\nsenseless=nonsense\nport=1234");
+    void readConfiguration() throws Exception {
+        Files.writeString(configPath, """
+                metric_path=/metrics
+                ip=127.0.0.1
+                senseless=nonsense
+                port=1234
+                """);
         configurationReader.readConfiguration();
     }
 
     @Test
-    void test_bad_format_port() throws Exception {
-        Files.writeString(configPath, "metric_path=/metrics\nip=127.0.0.1\nsenseless=nonsense\nport=localhost");
+    void readConfiguration_withNoConfigFile() {
+        assertThatThrownBy(configurationReader::readConfiguration).isInstanceOf(FileNotFoundException.class);
+    }
+
+    @Test
+    void readConfiguration_withInvalidPort() throws Exception {
+        Files.writeString(configPath, """
+                metric_path=/metrics
+                ip=127.0.0.1
+                senseless=nonsense
+                port=localhost
+                """);
         final var e = assertThrows(InvalidConfigurationException.class, configurationReader::readConfiguration);
         assertThat(e.getMessage()).contains("port");
     }
 
     @Test
-    void test_bad_format_host() throws Exception {
-        Files.writeString(configPath, "metric_path=/metrics\nip= \nsenseless=nonsense\nport=1234");
+    void readConfiguration_withInvalidHost() throws Exception {
+        Files.writeString(configPath, """
+                metric_path=/metrics
+                ip=\s
+                senseless=nonsense
+                port=1234
+                """);
         final var e = assertThrows(InvalidConfigurationException.class, configurationReader::readConfiguration);
         assertThat(e.getMessage()).contains("ip");
     }
 
     @Test
-    void test_bad_format_metric_path() throws Exception {
-        Files.writeString(configPath, "metric_path=metrics\nip=127.0.0.1\nsenseless=nonsense\nport=1234");
+    void readConfiguration_withInvalidMetricPath() throws Exception {
+        Files.writeString(configPath, """
+                metric_path=metrics
+                ip=127.0.0.1
+                senseless=nonsense
+                port=1234
+                """);
         final var e = assertThrows(InvalidConfigurationException.class, configurationReader::readConfiguration);
         assertThat(e.getMessage()).contains("metric_path");
     }
 
     @Test
-    void test_typo_metric_path() throws Exception {
-        Files.writeString(configPath, "metric_ph=metrics\nip=127.0.0.1\nsenseless=nonsense\nport=1234");
+    void readConfiguration_withInvalidMetricPathName() throws Exception {
+        Files.writeString(configPath, """
+                metric_ph=metrics
+                ip=127.0.0.1
+                senseless=nonsense
+                port=1234
+                """);
         final var e = assertThrows(InvalidConfigurationException.class, configurationReader::readConfiguration);
         assertThat(e.getMessage()).contains("metric_path");
     }
 
     @Test
-    void test_typo_ip() throws Exception {
-        Files.writeString(configPath, "metric_path=metrics\nIP=127.0.0.1\nsenseless=nonsense\nport=1234");
+    void readConfiguration_withInvalidIpName() throws Exception {
+        Files.writeString(configPath, """
+                metric_path=metrics
+                IP=127.0.0.1
+                senseless=nonsense
+                port=1234
+                """);
         final var e = assertThrows(InvalidConfigurationException.class, configurationReader::readConfiguration);
         assertThat(e.getMessage()).contains("ip");
     }
 
     @Test
-    void test_typo_port() throws Exception {
-        Files.writeString(configPath, "metric_path=metrics\nip=127.0.0.1\nsenseless=nonsense\npot=1234");
+    void readConfiguration_withInvalidPortName() throws Exception {
+        Files.writeString(configPath, """
+                metric_path=metrics
+                ip=127.0.0.1
+                senseless=nonsense
+                pot=1234
+                """);
         final var e = assertThrows(InvalidConfigurationException.class, configurationReader::readConfiguration);
         assertThat(e.getMessage()).contains("port");
     }

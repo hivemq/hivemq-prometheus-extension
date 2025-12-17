@@ -34,7 +34,6 @@ import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 class PrometheusExtensionMainTest {
 
@@ -44,8 +43,11 @@ class PrometheusExtensionMainTest {
 
     private @NotNull Path configPath;
 
+    @TempDir
+    private @NotNull Path tempDir;
+
     @BeforeEach
-    void setUp(@TempDir final @NotNull Path tempDir) {
+    void setUp() {
         final var extensionInformation = mock(ExtensionInformation.class);
         when(extensionStartInput.getExtensionInformation()).thenReturn(extensionInformation);
         when(extensionInformation.getExtensionHomeFolder()).thenReturn(tempDir.toFile());
@@ -53,17 +55,17 @@ class PrometheusExtensionMainTest {
     }
 
     @Test
-    void test_start_extension_fail_no_configFile() {
+    void extensionStart_withMissingConfigFile_thenFails() {
         prometheusExtensionMain.extensionStart(extensionStartInput, extensionStartOutput);
         final var stringCaptor = ArgumentCaptor.forClass(String.class);
-        verify(extensionStartOutput, times(1)).preventExtensionStartup(stringCaptor.capture());
+        verify(extensionStartOutput).preventExtensionStartup(stringCaptor.capture());
         assertThat(stringCaptor.getValue()).contains("could not be read");
     }
 
     @Test
-    void test_start_extension_fail_corrupt_configFile() throws Exception {
+    void extensionStart_withCorruptConfigFile_thenFails() throws Exception {
         Files.createFile(configPath);
         prometheusExtensionMain.extensionStart(extensionStartInput, extensionStartOutput);
-        verify(extensionStartOutput, times(1)).preventExtensionStartup(anyString());
+        verify(extensionStartOutput).preventExtensionStartup(anyString());
     }
 }
