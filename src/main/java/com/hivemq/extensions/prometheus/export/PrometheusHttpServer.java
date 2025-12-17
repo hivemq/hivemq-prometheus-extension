@@ -80,7 +80,6 @@ public class PrometheusHttpServer {
         final var collectorRegistry = new CollectorRegistry(true);
         collectorRegistry.register(collector);
         final var metricHandler = new HTTPMetricHandler(collectorRegistry, null);
-        registerHandler("/", metricHandler);
         registerHandler(metricsHandlerEndpoint, metricHandler);
         try {
             // HttpServer.start() starts the HttpServer in a new background thread.
