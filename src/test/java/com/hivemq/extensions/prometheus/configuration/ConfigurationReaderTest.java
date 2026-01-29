@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -41,11 +42,12 @@ class ConfigurationReaderTest {
     private @NotNull Path tempDir;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws IOException {
         final var extensionInformation = mock(ExtensionInformation.class);
         when(extensionInformation.getExtensionHomeFolder()).thenReturn(tempDir.toFile());
         configurationReader = new ConfigurationReader(extensionInformation);
         configPath = tempDir.resolve(ConfigurationReader.CONFIG_PATH);
+        Files.createDirectories(configPath.getParent());
     }
 
     @Test
@@ -134,5 +136,15 @@ class ConfigurationReaderTest {
                 """);
         final var e = assertThrows(InvalidConfigurationException.class, configurationReader::readConfiguration);
         assertThat(e.getMessage()).contains("port");
+    }
+
+    @Test
+    void readConfiguration_withLegacyLocation() throws Exception {
+        Files.writeString(tempDir.resolve(ConfigurationReader.LEGACY_CONFIG_PATH), """
+                metric_path=/metrics
+                ip=127.0.0.1
+                port=1234
+                """);
+        configurationReader.readConfiguration();
     }
 }
