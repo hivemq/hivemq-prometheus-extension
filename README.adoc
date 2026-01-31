@@ -21,7 +21,7 @@ The properties are preconfigured with standard settings and can be adapted to yo
 
 == Configuration
 
-The extension can be configured with the `prometheusConfiguration.properties` file, which is part of the `hivemq-prometheus-extension` folder.
+The extension can be configured with the `conf/prometheusConfiguration.properties` file, which is part of the `hivemq-prometheus-extension` folder.
 
 [cols="1m,1,2" options="header"]
 .Configuration Options

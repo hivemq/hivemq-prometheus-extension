@@ -66,7 +66,8 @@ oci {
                     into("opt/hivemq/extensions") {
                         permissions("*/", 0b111_111_101)
                         permissions("*/hivemq-extension.xml", 0b110_110_100)
-                        permissions("*/prometheusConfiguration.properties", 0b110_110_100)
+                        permissions("*/conf/", 0b111_111_101)
+                        permissions("*/conf/prometheusConfiguration.properties", 0b110_110_100)
                         from(zipTree(tasks.hivemqExtensionZip.flatMap { it.archiveFile }))
                     }
                 }
@@ -86,6 +87,7 @@ testing {
                 compileOnly(libs.jetbrains.annotations)
                 implementation(libs.assertj)
                 implementation(libs.mockito)
+                implementation(libs.logback.classic)
             }
         }
         "integrationTest"(JvmTestSuite::class) {
