@@ -20,7 +20,6 @@ import com.hivemq.extension.sdk.api.parameter.ExtensionInformation;
 import org.aeonbits.owner.ConfigFactory;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -33,10 +32,8 @@ import java.util.Properties;
  */
 public class ConfigurationReader {
 
-    /**
-     * The path of the prometheusConfiguration.properties file relative to the HiveMQ conf folder
-     */
-    public static final @NotNull String CONFIG_PATH = "prometheusConfiguration.properties";
+    public static final @NotNull String CONFIG_PATH = "conf/config.properties";
+    public static final @NotNull String LEGACY_CONFIG_PATH = "prometheusConfiguration.properties";
     /**
      * The minimal possible  port
      */
@@ -46,22 +43,18 @@ public class ConfigurationReader {
      */
     private static final int MAX_PORT = 65535;
 
-    private final @NotNull ExtensionInformation extensionInformation;
+    private final @NotNull ConfigResolver configResolver;
 
     public ConfigurationReader(final @NotNull ExtensionInformation extensionInformation) {
-        this.extensionInformation = extensionInformation;
+        this.configResolver = new ConfigResolver(extensionInformation.getExtensionHomeFolder().toPath(),
+                "Prometheus Monitoring Extension",
+                CONFIG_PATH,
+                LEGACY_CONFIG_PATH);
     }
 
-    /**
-     * @return the {@link PrometheusExtensionConfiguration} which holds the configuration-information
-     * @throws FileNotFoundException         if the prometheusConfiguration.properties is not found in the conf folder
-     *                                       of HiveMQ
-     * @throws InvalidConfigurationException if the configuration cannot be initiated due to other critical errors
-     * @throws FileNotFoundException         if the configuration file cannot be found
-     */
     public @NotNull PrometheusExtensionConfiguration readConfiguration()
             throws FileNotFoundException, InvalidConfigurationException {
-        final var file = new File(extensionInformation.getExtensionHomeFolder(), CONFIG_PATH);
+        final var file = configResolver.get().toFile();
         if (!file.canRead()) {
             throw new FileNotFoundException(file.getAbsolutePath());
         }
