@@ -15,13 +15,13 @@ The Prometheus Monitoring extension allows HiveMQ to expose metrics to a Prometh
 == Installation
 
 . Unzip the file: `hivemq-prometheus-extension-<version>-distribution.zip` to the directory: `<HIVEMQ_HOME>/extensions`
-. A configuration file `prometheusConfiguration.properties` can be found in the `hivemq-prometheus-extension` folder.
+. A configuration file `conf/config.properties` can be found in the `hivemq-prometheus-extension` folder.
 The properties are preconfigured with standard settings and can be adapted to your needs (The meaning of the fields is explained below).
 . Start HiveMQ.
 
 == Configuration
 
-The extension can be configured with the `prometheusConfiguration.properties` file, which is part of the `hivemq-prometheus-extension` folder.
+The extension can be configured with the `conf/config.properties` file, which is part of the `hivemq-prometheus-extension` folder.
 
 [cols="1m,1,2" options="header"]
 .Configuration Options
@@ -47,7 +47,7 @@ It must start with a slash.
 
 == First Steps
 
-You can test your configuration by navigating to `<ip>:<port><metric_path>` (as configured in `prometheusConfiguration.properties`) in your browser.
+You can test your configuration by navigating to `<ip>:<port><metric_path>` (as configured in `conf/config.properties`) in your browser.
 For example the address would be http://localhost:9399/metrics with default values.
 
 You should see data provided by the extension:
@@ -62,7 +62,7 @@ com_hivemq_messages_incoming_publish_rate_total 0.0
 == Final Steps
 
 . Load and install Prometheus
-. Configure Prometheus to scrape from <ip>:<port><metricPath> as configured in the prometheusConfiguration.properties.
+. Configure Prometheus to scrape from <ip>:<port><metricPath> as configured in the `conf/config.properties`.
 . Look at the website provided by your Prometheus application.
 You should be able to find the HiveMQ metrics.
 

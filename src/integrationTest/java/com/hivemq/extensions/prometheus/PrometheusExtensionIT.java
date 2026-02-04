@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.testcontainers.hivemq.HiveMQContainer;
 import org.testcontainers.hivemq.HiveMQExtension;
+import org.testcontainers.images.builder.Transferable;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -81,6 +82,37 @@ class PrometheusExtensionIT {
                 1,
                 "myMeter_total",
                 1.0));
+    }
+
+    @Test
+    @Timeout(value = 2, unit = TimeUnit.MINUTES)
+    void configAtLegacyLocation_metricsEndpointAvailable() throws Exception {
+        final var legacyConfig = """
+                ip=0.0.0.0
+                port=9399
+                metric_path=/metrics
+                """;
+
+        final var legacyHivemq =
+                new HiveMQContainer(OciImages.getImageName("hivemq/extensions/hivemq-prometheus-extension")
+                        .asCompatibleSubstituteFor("hivemq/hivemq4")) //
+                        .withExposedPorts(9399)
+                        .withCopyToContainer(Transferable.of(legacyConfig),
+                                "/opt/hivemq/extensions/hivemq-prometheus-extension/prometheusConfiguration.properties")
+                        .withEnv("HIVEMQ_DISABLE_STATISTICS", "true");
+
+        try (legacyHivemq) {
+            legacyHivemq.start();
+            try (final var client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NORMAL).build()) {
+                final var url =
+                        "http://%s:%d/metrics".formatted(legacyHivemq.getHost(), legacyHivemq.getMappedPort(9399));
+                final var request = HttpRequest.newBuilder().uri(URI.create(url)).build();
+
+                final var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                assertThat(response.statusCode()).isEqualTo(200);
+                assertThat(response.body()).isNotEmpty();
+            }
+        }
     }
 
     private void assertMetrics(final @NotNull Map<String, Number> metrics) throws Exception {
