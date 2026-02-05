@@ -31,7 +31,7 @@ jobs:
             21
 
       - name: Check for new issues
-        uses: hivemq/hivemq-snyk-composite-action@344969d844a085dfbf2d050e2758d5d356aebea7 # v2
+        uses: hivemq/hivemq-snyk-composite-action@87155e0bc5cddd95ad2d4d184952bb2dbb9d225f # v2
         with:
           snyk-args: --org=hivemq-os-extensions --project-name=hivemq-prometheus-extension --configuration-matching=^runtimeClasspath$ -d hivemq-prometheus-extension
           snyk-token: ${{ secrets.SNYK_TOKEN }}
