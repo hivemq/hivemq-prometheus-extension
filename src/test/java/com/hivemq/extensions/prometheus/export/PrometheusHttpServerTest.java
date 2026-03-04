@@ -54,19 +54,14 @@ class PrometheusHttpServerTest {
 
     @Test
     void invalidPort() {
-        assertThatThrownBy(() -> PrometheusHttpServer.builder()
-                .port(-1)
-                .collector(collector)
-                .buildAndStart()).isInstanceOf(IllegalArgumentException.class).hasMessage("port out of range:-1");
+        assertThatThrownBy(() -> PrometheusHttpServer.builder().port(-1).collector(collector).buildAndStart())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("port out of range:-1");
     }
 
     @Test
     void metricsCustomPath_withRootPath() throws Exception {
-        run(PrometheusHttpServer.builder()
-                .port(0)
-                .metricsHandlerPath("/")
-                .collector(collector)
-                .buildAndStart(), "/");
+        run(PrometheusHttpServer.builder().port(0).metricsHandlerPath("/").collector(collector).buildAndStart(), "/");
     }
 
     private void run(final @NotNull PrometheusHttpServer server, final @NotNull String path) throws Exception {

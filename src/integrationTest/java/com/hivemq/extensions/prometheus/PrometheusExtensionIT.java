@@ -51,7 +51,7 @@ class PrometheusExtensionIT {
     @Container
     final @NotNull HiveMQContainer hivemq =
             new HiveMQContainer(OciImages.getImageName("hivemq/extensions/hivemq-prometheus-extension")
-                    .asCompatibleSubstituteFor("hivemq/hivemq4")) //
+                    .asCompatibleSubstituteFor("hivemq/hivemq4"))
                     .withExposedPorts(9399)
                     .withExtension(HiveMQExtension.builder()
                             .mainClass(MyMetricsExtension.class)
@@ -95,7 +95,7 @@ class PrometheusExtensionIT {
 
         final var legacyHivemq =
                 new HiveMQContainer(OciImages.getImageName("hivemq/extensions/hivemq-prometheus-extension")
-                        .asCompatibleSubstituteFor("hivemq/hivemq4")) //
+                        .asCompatibleSubstituteFor("hivemq/hivemq4"))
                         .withExposedPorts(9399)
                         .withCopyToContainer(Transferable.of(legacyConfig),
                                 "/opt/hivemq/extensions/hivemq-prometheus-extension/prometheusConfiguration.properties")

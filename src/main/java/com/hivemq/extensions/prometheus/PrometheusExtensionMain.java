@@ -56,19 +56,19 @@ public class PrometheusExtensionMain implements ExtensionMain {
                 prometheusServer.start();
             } catch (final Exception e) {
                 LOG.error("Error starting the HTTP Server for Prometheus Extension", e);
-                extensionStartOutput.preventExtensionStartup(String.format(
-                        "Error starting the HTTP Server for Prometheus Extension%s",
-                        (e.getMessage() != null) ? ": " + e.getMessage() : ""));
+                extensionStartOutput.preventExtensionStartup(
+                        String.format("Error starting the HTTP Server for Prometheus Extension%s",
+                                (e.getMessage() != null) ? ": " + e.getMessage() : ""));
             }
         } catch (final FileNotFoundException e) {
-            extensionStartOutput.preventExtensionStartup(String.format("The configuration file: %s could not be read",
-                    e.getMessage()));
+            extensionStartOutput.preventExtensionStartup(
+                    String.format("The configuration file: %s could not be read", e.getMessage()));
         } catch (final InvalidConfigurationException e) {
             extensionStartOutput.preventExtensionStartup(e.getMessage());
         } catch (final Exception e) {
-            extensionStartOutput.preventExtensionStartup(String.format(
-                    "Unknown error while reading configuration file%s",
-                    (e.getMessage() != null) ? ": " + e.getMessage() : ""));
+            extensionStartOutput
+                    .preventExtensionStartup(String.format("Unknown error while reading configuration file%s",
+                            (e.getMessage() != null) ? ": " + e.getMessage() : ""));
         }
     }
 
