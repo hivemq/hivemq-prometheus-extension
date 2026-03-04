@@ -5,7 +5,7 @@ plugins {
     alias(libs.plugins.hivemq.extension)
     alias(libs.plugins.defaults)
     alias(libs.plugins.oci)
-    alias(libs.plugins.license)
+    alias(libs.plugins.spotless)
 }
 
 group = "com.hivemq.extensions"
@@ -131,9 +131,10 @@ testing {
     }
 }
 
-license {
-    header = rootDir.resolve("HEADER")
-    mapping("java", "SLASHSTAR_STYLE")
+spotless {
+    java {
+        licenseHeaderFile(rootDir.resolve("HEADER"))
+    }
 }
 
 // configure reproducible builds
