@@ -35,7 +35,7 @@ public class ConfigurationReader {
     public static final @NotNull String CONFIG_PATH = "conf/config.properties";
     public static final @NotNull String LEGACY_CONFIG_PATH = "prometheusConfiguration.properties";
     /**
-     * The minimal possible  port
+     * The minimal possible port
      */
     private static final int MIN_PORT = 1;
     /**
@@ -74,7 +74,7 @@ public class ConfigurationReader {
     /**
      * In the ConfigFactory.create() it is not tested whether the entries make sense (here e.g. port holds an int)
      *
-     * @param config config to be tested
+     * @param  config                        config to be tested
      * @throws InvalidConfigurationException thrown when an entry makes no sense or does not meet the requirements
      */
     private void testConfiguration(final @NotNull PrometheusExtensionConfiguration config)
@@ -116,14 +116,12 @@ public class ConfigurationReader {
         }
         final var port = config.port();
         if (port < MIN_PORT) {
-            throw new InvalidConfigurationException(String.format("The port must not be smaller than %d, but was %d",
-                    MIN_PORT,
-                    port));
+            throw new InvalidConfigurationException(
+                    String.format("The port must not be smaller than %d, but was %d", MIN_PORT, port));
         }
         if (port > MAX_PORT) {
-            throw new InvalidConfigurationException(String.format("The port must not be greater than %d, but was %d",
-                    MAX_PORT,
-                    port));
+            throw new InvalidConfigurationException(
+                    String.format("The port must not be greater than %d, but was %d", MAX_PORT, port));
         }
     }
 

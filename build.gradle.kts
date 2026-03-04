@@ -134,6 +134,9 @@ testing {
 spotless {
     java {
         licenseHeaderFile(rootDir.resolve("HEADER"))
+        eclipse().configFile(rootDir.resolve("eclipse-formatter.xml"))
+        trimTrailingWhitespace()
+        endWithNewline()
     }
 }
 

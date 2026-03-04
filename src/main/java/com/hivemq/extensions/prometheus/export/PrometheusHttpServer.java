@@ -36,19 +36,20 @@ import java.util.concurrent.TimeUnit;
 /**
  * An HTTP server for exposing Prometheus metrics.
  * <p>
- * This class uses {@link com.sun.net.httpserver.HttpServer} to provide a lightweight HTTP endpoint for Prometheus
- * to scrape metrics. It registers a metrics handler at the root path ("/") and at a configurable endpoint.
+ * This class uses {@link com.sun.net.httpserver.HttpServer} to provide a lightweight HTTP endpoint for Prometheus to
+ * scrape metrics. It registers a metrics handler at the root path ("/") and at a configurable endpoint.
  * <p>
  * Usage:
+ *
  * <pre>
- *     final var server = PrometheusHttpServer.builder()
+ * final var server = PrometheusHttpServer.builder()
  *         .collector(myCollector)
  *         .hostname("0.0.0.0")
  *         .port(8080)
  *         .metricsHandlerEndpoint("/metrics")
  *         .buildAndStart();
- *     // ...
- *     server.stop();
+ * // ...
+ * server.stop();
  * </pre>
  *
  * @author David Sondermann
@@ -111,8 +112,8 @@ public class PrometheusHttpServer {
     }
 
     /**
-     * Gets the port number. This is useful if you did not specify a port and the server picked a free
-     * port automatically.
+     * Gets the port number. This is useful if you did not specify a port and the server picked a free port
+     * automatically.
      */
     public int getPort() {
         return server.getAddress().getPort();
@@ -148,8 +149,8 @@ public class PrometheusHttpServer {
         }
 
         /**
-         * Port to bind to. Default is 0, indicating that a random port will be selected. You can learn
-         * the randomly selected port by calling {@link PrometheusHttpServer#getPort()}.
+         * Port to bind to. Default is 0, indicating that a random port will be selected. You can learn the randomly
+         * selected port by calling {@link PrometheusHttpServer#getPort()}.
          */
         public Builder port(final int port) {
             this.port = port;

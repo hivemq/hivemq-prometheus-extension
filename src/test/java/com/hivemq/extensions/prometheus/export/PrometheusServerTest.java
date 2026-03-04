@@ -57,7 +57,7 @@ class PrometheusServerTest {
         metricRegistry.counter("my-counter-2").inc();
 
         try (final var httpClient = HttpClient.newHttpClient()) {
-            //noinspection HttpUrlsUsage
+            // noinspection HttpUrlsUsage
             final var url = "http://%s:%d%s".formatted(config.hostIp(), config.port(), config.metricPath());
             final var httpRequest = HttpRequest.newBuilder(URI.create(url)).build();
             final var response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());

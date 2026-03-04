@@ -26,16 +26,21 @@ import static org.aeonbits.owner.Config.DisableableFeature.VARIABLE_EXPANSION;
 @Config.DisableFeature({VARIABLE_EXPANSION, PARAMETER_FORMATTING})
 public interface PrometheusExtensionConfiguration extends Config {
 
-    @NotNull String METRIC_PATH_KEY = "metric_path";
-    @NotNull String IP_KEY = "ip";
-    @NotNull String PORT_KEY = "port";
+    @NotNull
+    String METRIC_PATH_KEY = "metric_path";
+    @NotNull
+    String IP_KEY = "ip";
+    @NotNull
+    String PORT_KEY = "port";
 
     @Key(PORT_KEY)
     int port();
 
     @Key(IP_KEY)
-    @Nullable String hostIp();
+    @Nullable
+    String hostIp();
 
     @Key(METRIC_PATH_KEY)
-    @Nullable String metricPath();
+    @Nullable
+    String metricPath();
 }

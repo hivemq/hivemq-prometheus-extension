@@ -22,12 +22,12 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
- * A {@link RejectedExecutionHandler} implementation that blocks the calling thread
- * when the executor's task queue is full, instead of rejecting the task.
+ * A {@link RejectedExecutionHandler} implementation that blocks the calling thread when the executor's task queue is
+ * full, instead of rejecting the task.
  * <p>
- * Unlike standard {@code RejectedExecutionHandler} implementations (such as {@code AbortPolicy}),
- * this handler attempts to put the rejected task into the queue, blocking until space becomes available.
- * This can be useful in scenarios where task loss is unacceptable and backpressure is desired.
+ * Unlike standard {@code RejectedExecutionHandler} implementations (such as {@code AbortPolicy}), this handler attempts
+ * to put the rejected task into the queue, blocking until space becomes available. This can be useful in scenarios
+ * where task loss is unacceptable and backpressure is desired.
  *
  * @author David Sondermann
  */

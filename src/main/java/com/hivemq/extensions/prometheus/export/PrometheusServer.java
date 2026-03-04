@@ -56,7 +56,7 @@ public class PrometheusServer {
                 .buildAndStart();
         httpServerRef.set(server);
 
-        //noinspection HttpUrlsUsage
+        // noinspection HttpUrlsUsage
         LOG.info("Started HTTPServer exposing Prometheus metrics on http://{}:{}{}",
                 configuration.hostIp(),
                 configuration.port(),
