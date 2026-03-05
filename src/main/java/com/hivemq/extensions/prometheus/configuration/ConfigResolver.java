@@ -54,7 +54,8 @@ public class ConfigResolver implements Supplier<Path> {
         // the only way it could be there is when deliberately placed
         if (legacyPath.toFile().exists()) {
             if (!legacyWarningAlreadyLogged.getAndSet(true)) {
-                LOG.warn("{}: The configuration file '{}' is placed at the legacy location. " +
+                LOG.warn(
+                        "{}: The configuration file '{}' is placed at the legacy location. " +
                                 "Please move the configuration file to '{}'. " +
                                 "Support for the legacy location will be removed in a future release.",
                         extensionName,

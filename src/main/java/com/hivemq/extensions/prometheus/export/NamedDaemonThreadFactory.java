@@ -23,19 +23,18 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * A {@link ThreadFactory} implementation that creates threads with custom names and daemon status,
- * specifically for use with the Prometheus HTTP server.
+ * A {@link ThreadFactory} implementation that creates threads with custom names and daemon status, specifically for use
+ * with the Prometheus HTTP server.
  * <p>
  * This factory wraps a delegate {@link ThreadFactory} and assigns each thread a unique name in the format
- * {@code prometheus-http-<poolNumber>-<threadNumber>}. It also allows threads to be created as daemon
- * threads.
+ * {@code prometheus-http-<poolNumber>-<threadNumber>}. It also allows threads to be created as daemon threads.
  * <p>
  * <b>Why daemon threads?</b>
  * <p>
  * The Prometheus HTTP server is typically used for exposing metrics and should not prevent the JVM from shutting down
- * when the main application threads have terminated. By creating the HTTP server's threads as daemon threads,
- * we ensure that they do not block JVM shutdown, allowing for graceful application termination without requiring
- * explicit shutdown of the metrics server.
+ * when the main application threads have terminated. By creating the HTTP server's threads as daemon threads, we ensure
+ * that they do not block JVM shutdown, allowing for graceful application termination without requiring explicit
+ * shutdown of the metrics server.
  *
  * @author David Sondermann
  */
