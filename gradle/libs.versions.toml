@@ -28,5 +28,5 @@ testcontainers-junitJupiter = { module = "org.testcontainers:testcontainers-juni
 [plugins]
 defaults = { id = "io.github.sgtsilvio.gradle.defaults", version = "0.3.0" }
 hivemq-extension = { id = "com.hivemq.extension", version = "5.0.0" }
-spotless = { id = "com.diffplug.spotless", version = "8.3.0" }
+spotless = { id = "com.diffplug.spotless", version = "8.4.0" }
 oci = { id = "io.github.sgtsilvio.gradle.oci", version = "0.25.0" }
