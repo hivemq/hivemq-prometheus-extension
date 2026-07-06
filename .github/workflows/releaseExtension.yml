@@ -36,3 +36,10 @@ jobs:
         run: gh release upload ${{ github.event.release.tag_name }} ./build/hivemq-extension/hivemq-prometheus-extension-${{ github.event.release.name }}.zip.sha256
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Deploy to S3 releases bucket
+        run: |
+          aws s3 cp ./build/hivemq-extension/hivemq-prometheus-extension-${{ github.event.release.name }}.zip s3://${{ secrets.RELEASES_S3_BUCKET }}/extensions/ --region ${{ secrets.RELEASES_S3_REGION }}
+          aws s3 cp ./build/hivemq-extension/hivemq-prometheus-extension-${{ github.event.release.name }}.zip.sha256 s3://${{ secrets.RELEASES_S3_BUCKET }}/extensions/ --region ${{ secrets.RELEASES_S3_REGION }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.RELEASES_S3_AWS_TOKEN_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.RELEASES_S3_AWS_TOKEN_SECRET_KEY }}
