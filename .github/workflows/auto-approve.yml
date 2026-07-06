@@ -1,0 +1,44 @@
+name: Auto-approve Release PRs
+
+on:
+  pull_request:
+    types: ['opened', 'reopened', 'edited', 'synchronize']
+    branches:
+      - master
+
+concurrency:
+  group: auto-approve-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  auto-approve:
+    name: Evaluate auto-approve eligibility
+    runs-on: ubuntu-latest
+    # Fork PRs do not receive secrets; the status job treats "skipped" as pass.
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    steps:
+      - uses: hivemq/hivemq-auto-approve-action@31ce48e4201f5bbfa39abdc246a352a059d8b2c6 # v1
+        with:
+          allowed-team: hivemq-team-pd
+          allowed-changes: |
+            - path: '^gradle\.properties$'
+              lines: '^version=[0-9]+\.[0-9]+\.[0-9]+$'
+          github-token: ${{ secrets.JENKINS_GITHUB_TOKEN }}
+          reviewer-login: ${{ secrets.JENKINS_GITHUB_USERNAME }}
+
+  status:
+    name: Auto-approve Release PRs
+    needs: [auto-approve]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify auto-approve job result
+        run: |
+          result="${{ needs.auto-approve.result }}"
+          echo "auto-approve job result: $result"
+          if [ "$result" = "success" ] || [ "$result" = "skipped" ]; then
+            exit 0
+          fi
+          exit 1
