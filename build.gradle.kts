@@ -35,6 +35,12 @@ tasks.compileJava {
     }
 }
 
+tasks.named<JavaCompile>("compileIntegrationTestJava") {
+    // The integration tests bundle a HiveMQ extension that is loaded inside the HiveMQ container (Java 21).
+    // Compile to Java 21 bytecode so the container can load it, independent of the Java 25 build toolchain.
+    options.release.set(21)
+}
+
 dependencies {
     compileOnly(libs.jetbrains.annotations)
     implementation(libs.prometheus.simpleClient)
