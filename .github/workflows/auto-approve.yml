@@ -19,7 +19,7 @@ jobs:
     # Fork PRs do not receive secrets; the status job treats "skipped" as pass.
     if: github.event.pull_request.head.repo.full_name == github.repository
     steps:
-      - uses: hivemq/hivemq-auto-approve-action@31ce48e4201f5bbfa39abdc246a352a059d8b2c6 # v1
+      - uses: hivemq/hivemq-auto-approve-action@8bb836e84d4d6295ee78b73e438453018aaa36d8 # v1
         with:
           allowed-team: hivemq-team-pd
           allowed-changes: |
